@@ -4,10 +4,10 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/DashBoard";
 import AddBook from "./pages/AddBook";
 import Analytics from "./pages/Analytics";
-import SignUp from "./pages/SignUp";
+import SignUp from "./pages/Signup";
 import useAuthStore from "./store/authStore";
 
 // ✅ 1. Dynamically import the Background component
