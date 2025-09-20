@@ -46,7 +46,7 @@ export default function BookCard({ book, onDelete, onUpdate, onBorrow, onReturn 
            </Button>
         )}
         {isAdmin && onUpdate && (
-          <Button onClick={() => onUpdate(book)} className="flex-grow" variant="outline">
+          <Button onClick={() => onUpdate(book)} className="flex-grow bg-purple-500" variant={"button"} >
             Update
           </Button>
         )}
