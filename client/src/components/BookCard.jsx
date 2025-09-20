@@ -1,4 +1,7 @@
+import useIsAdmin from "./AdminOnly";
+
 export default function BookCard({ book, onDelete, onUpdate }) {
+  const isAdmin = useIsAdmin();
   return (
     <div className="bg-gray-700 p-4 rounded-lg shadow-md flex flex-col">
       <h3 className="text-lg font-bold text-blue-300">{book.title}</h3>
@@ -24,7 +27,7 @@ export default function BookCard({ book, onDelete, onUpdate }) {
             Update
           </button>
         )}
-        {onDelete && (
+        {onDelete && isAdmin && (
           <button
             onClick={() => onDelete(book._id)}
             className="bg-red-500 px-3 py-1 rounded-md text-sm"
