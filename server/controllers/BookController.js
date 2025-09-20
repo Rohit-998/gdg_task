@@ -23,6 +23,7 @@ export const getAllBooks = async (req, res) => {
       .sort(sortOptions)
       .limit(limit * 1)
       .skip((page - 1) * limit)
+      .populate('borrowedBy', 'name')
       .exec();
     const count = await Book.countDocuments(query);
     const response = {
@@ -93,130 +94,9 @@ export const deleteBook = async (req, res) => {
   }
 };
 
-export const getBookAnalytics = async (req, res) => {
-  try {
-    const cacheKey = "books_analytics";
-    const cached = await redis.get(cacheKey);
-    if (cached) {
-      return res.status(200).json(JSON.parse(cached));
-    }
-    const totalBooks = await Book.countDocuments();
-    const availableBooks = await Book.countDocuments({ available: true });
-    const borrowedBooks = totalBooks - availableBooks;
-    const genres = await Book.aggregate([
-      { $group: { _id: "$genre", count: { $sum: 1 } } },
-      { $sort: { count: -1 } }
-    ]);
-    const response = { totalBooks, availableBooks, borrowedBooks, genres };
-    await redis.set(cacheKey, JSON.stringify(response), "EX", 300);
-    res.status(200).json(response);
-  } catch (error) {
-    console.error("Error in analytics:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-export const getBooksExtendedQuery = async (req, res) => {
-  try {
-    const { title, author, genre } = req.query;
-    const cacheKey = `extended_${title || "all"}_${author || "all"}_${genre || "all"}`;
-    const cached = await redis.get(cacheKey);
-    if (cached) {
-      return res.status(200).json(JSON.parse(cached));
-    }
-    const query = {};
-    if (title) query.title = { $regex: title, $options: "i" };
-    if (author) query.author = { $regex: author, $options: "i" };
-    if (genre) query.genre = genre;
-    const books = await Book.find(query);
-    const response = { total: books.length, books };
-    await redis.set(cacheKey, JSON.stringify(response), "EX", 600);
-    res.status(200).json(response);
-  } catch (error) {
-    console.error("Error in extended query:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-export const filterBooks = async (req, res) => {
-  try {
-    const { minPages, maxPages, available } = req.query;
-    const cacheKey = `filter_${minPages || "any"}_${maxPages || "any"}_${available || "any"}`;
-    const cached = await redis.get(cacheKey);
-    if (cached) {
-      return res.status(200).json(JSON.parse(cached));
-    }
-    const query = {};
-    if (minPages || maxPages) {
-      query.pages = {};
-      if (minPages) query.pages.$gte = parseInt(minPages);
-      if (maxPages) query.pages.$lte = parseInt(maxPages);
-    }
-    if (available) query.available = available === "true";
-    const books = await Book.find(query);
-    const response = { total: books.length, books };
-    await redis.set(cacheKey, JSON.stringify(response), "EX", 600);
-    res.status(200).json(response);
-  } catch (error) {
-    console.error("Error in filtering:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-export const sortBooks = async (req, res) => {
-  try {
-    const { sortBy, order } = req.query;
-    const cacheKey = `sort_${sortBy || "none"}_${order || "asc"}`;
-    const cached = await redis.get(cacheKey);
-    if (cached) {
-      return res.status(200).json(JSON.parse(cached));
-    }
-    const sort = {};
-    if (sortBy) sort[sortBy] = order === "desc" ? -1 : 1;
-    const books = await Book.find().sort(sort);
-    const response = { total: books.length, books };
-    await redis.set(cacheKey, JSON.stringify(response), "EX", 600);
-    res.status(200).json(response);
-  } catch (error) {
-    console.error("Error in sorting:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-export const paginateBooks = async (req, res) => {
-  try {
-    let { page, limit } = req.query;
-    page = parseInt(page) || 1;
-    limit = parseInt(limit) || 10;
-    const skip = (page - 1) * limit;
-    const cacheKey = `paginate_${page}_${limit}`;
-    const cached = await redis.get(cacheKey);
-    if (cached) {
-      return res.status(200).json(JSON.parse(cached));
-    }
-    const totalBooks = await Book.countDocuments();
-    const books = await Book.find().skip(skip).limit(limit);
-    const response = {
-      page,
-      limit,
-      totalBooks,
-      totalPages: Math.ceil(totalBooks / limit),
-      books
-    };
-    await redis.set(cacheKey, JSON.stringify(response), "EX", 600);
-    res.status(200).json(response);
-  } catch (error) {
-    console.error("Error in pagination:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-
-
 export const borrowBook = async (req, res) => {
   const { id } = req.params;
-  const userId = req.user.userId; 
-
+  const userId = req.user.userId;
   try {
     const book = await Book.findById(id);
     if (!book) {
@@ -225,14 +105,10 @@ export const borrowBook = async (req, res) => {
     if (!book.available) {
       return res.status(400).json({ message: "Book is currently unavailable" });
     }
-
-  
     book.available = false;
     book.borrowedBy = userId;
     await book.save();
-
-    await redis.flushall(); 
-
+    await redis.flushall();
     res.status(200).json({ message: "Book borrowed successfully", book });
   } catch (error) {
     console.error("Error borrowing book:", error);
@@ -240,35 +116,24 @@ export const borrowBook = async (req, res) => {
   }
 };
 
-
 export const returnBook = async (req, res) => {
-  const { id } = req.params; 
-  const { userId, role } = req.user; 
-
+  const { id } = req.params;
+  const { userId, role } = req.user;
   try {
     const book = await Book.findById(id);
-
     if (!book) {
       return res.status(404).json({ message: "Book not found" });
     }
-
- 
     if (book.available) {
-        return res.status(400).json({ message: "This book is already available." });
+      return res.status(400).json({ message: "This book is already available." });
     }
-
-   
     if (role !== 'Admin' && (!book.borrowedBy || book.borrowedBy.toString() !== userId)) {
       return res.status(403).json({ message: "You cannot return this book." });
     }
-
-
     book.available = true;
     book.borrowedBy = null;
     await book.save();
-
-    await redis.flushall(); 
-
+    await redis.flushall();
     res.status(200).json({ message: "Book returned successfully", book });
   } catch (error) {
     console.error("Error returning book:", error);

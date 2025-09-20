@@ -1,14 +1,9 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import BookCard from "../components/BookCard";
-import useIsAdmin from "../hooks/AdminOnly";
-import {
-  getBooks,
-  getDashboardBooks,
-  returnBook,
-  deleteBook,
-  updateBook,
-} from "../../lib/apiClient";
+
+import { getBooks, getDashboardBooks, returnBook, deleteBook, updateBook } from "../../lib/apiClient";
+import useIsAdmin from "../components/AdminOnly";
 
 export default function Dashboard() {
   const [books, setBooks] = useState([]);
@@ -16,12 +11,9 @@ export default function Dashboard() {
   const isAdmin = useIsAdmin();
 
   const fetchData = async () => {
-  
     if (isAdmin === undefined) return;
-
     setIsLoading(true);
     try {
- 
       const res = isAdmin ? await getBooks() : await getDashboardBooks();
       setBooks(res.data.books || []);
     } catch (err) {
@@ -32,24 +24,20 @@ export default function Dashboard() {
     }
   };
 
- 
   useEffect(() => {
     fetchData();
   }, [isAdmin]);
-
 
   const handleReturn = async (bookId) => {
     if (!window.confirm("Are you sure you want to return this book?")) return;
     try {
       await returnBook(bookId);
       toast.success("Book returned successfully!");
-      fetchData(); 
+      fetchData();
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to return book.");
     }
   };
-
-
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to permanently delete this book?")) return;
@@ -66,8 +54,7 @@ export default function Dashboard() {
     const newTitle = prompt("Enter new title:", book.title);
     if (!newTitle) return;
     const newAuthor = prompt("Enter new author:", book.author);
-    if (!newAuthor) return; 
-
+    if (!newAuthor) return;
     try {
       await updateBook(book._id, {
         ...book,
@@ -75,7 +62,7 @@ export default function Dashboard() {
         author: newAuthor,
       });
       toast.success("Book updated successfully!");
-      fetchData(); 
+      fetchData();
     } catch (err) {
       toast.error("Failed to update book!");
       console.error(err);
@@ -89,7 +76,6 @@ export default function Dashboard() {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">
-
         {isAdmin ? "Admin Dashboard (All Books)" : "My Borrowed Books"}
       </h1>
 
@@ -100,7 +86,6 @@ export default function Dashboard() {
               key={book._id}
               book={book}
               onReturn={handleReturn}
-             
               onDelete={isAdmin ? handleDelete : null}
               onUpdate={isAdmin ? handleUpdate : null}
             />

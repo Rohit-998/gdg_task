@@ -1,6 +1,6 @@
-import useIsAdmin from "../hooks/AdminOnly";
-import { Button } from "./ui/button";
 
+import useIsAdmin from "./AdminOnly";
+import { Button } from "./ui/button";
 
 export default function BookCard({ book, onDelete, onUpdate, onBorrow, onReturn }) {
   const isAdmin = useIsAdmin();
@@ -16,15 +16,11 @@ export default function BookCard({ book, onDelete, onUpdate, onBorrow, onReturn 
         alt={`${book.title} cover`}
         className="w-full h-60 object-contain rounded-md mb-4"
       />
-
       <div>
         <h3 className="text-xl font-bold text-blue-300 mb-2">{book.title}</h3>
         <p className="text-sm text-gray-400">👤 Author: {book.author}</p>
         <p className="text-sm text-gray-400">
-          📅 Published:{" "}
-          {book.publishedDate
-            ? new Date(book.publishedDate).toLocaleDateString()
-            : "N/A"}
+          📅 Published: {book.publishedDate ? new Date(book.publishedDate).toLocaleDateString() : "N/A"}
         </p>
         <p className="text-sm text-gray-400">🏷️ Genre: {book.genre || "N/A"}</p>
         <p className="text-sm text-gray-400">
@@ -32,25 +28,23 @@ export default function BookCard({ book, onDelete, onUpdate, onBorrow, onReturn 
           <span className={book.available ? "text-green-400 font-semibold" : "text-red-400 font-semibold"}>
             {book.available ? "Available" : "Borrowed"}
           </span>
+          {!book.available && book.borrowedBy && (
+            <span className="text-sm text-yellow-400"> by {book.borrowedBy.name}</span>
+          )}
         </p>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
-        
-        {onBorrow && book.available && (
+        {onBorrow && book.available && !isAdmin && (
           <Button onClick={() => onBorrow(book._id)} className="flex-grow">
             Borrow
           </Button>
         )}
-
-       
         {onReturn && !book.available && (
            <Button onClick={() => onReturn(book._id)} className="flex-grow" variant="secondary">
              {isAdmin ? "Force Return" : "Return Book"}
            </Button>
         )}
-
-        
         {isAdmin && onUpdate && (
           <Button onClick={() => onUpdate(book)} className="flex-grow" variant="outline">
             Update
