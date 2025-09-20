@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import useIsAdmin from "./AdminOnly";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -30,9 +31,9 @@ export default function Navbar() {
           } md:flex space-x-6 items-center`}
         >
           <Link to="/" className="hover:text-blue-400">Home</Link>
-          <Link to="/dashboard" className="hover:text-blue-400">Dashboard</Link>
+         { useIsAdmin && <Link to="/dashboard" className="hover:text-blue-400">Dashboard</Link>}
           <Link to="/add-book" className="hover:text-blue-400">Add Book</Link>
-          <Link to="/analytics" className="hover:text-blue-400">Analytics</Link>
+         { useIsAdmin && <Link to="/analytics" className="hover:text-blue-400">Analytics</Link>}
           {localStorage.getItem("token") ? (
             <button
               onClick={handleLogout}

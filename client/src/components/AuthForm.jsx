@@ -15,7 +15,6 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { signin, signup } from "../../lib/apiClient";
 
-// ✅ Dynamic schema: Name required only for SignUp
 const getAuthSchema = (type) =>
   z.object({
     name:
@@ -28,7 +27,6 @@ const getAuthSchema = (type) =>
       .min(6, { message: "Password must be at least 6 characters" }),
   });
 
-// ✅ FormField wrapper
 const FormField = ({ control, name, label, placeholder, type = "text" }) => (
   <Controller
     name={name}
@@ -83,14 +81,13 @@ export default function AuthForm({ type }) {
   return (
     <div className="flex items-center justify-center min-h-[70vh]">
       <div className="w-full max-w-md rounded-xl shadow-md p-6 card-border">
+     
         <div className="flex flex-col items-center mb-6">
           <img src="/logo.png" alt="Logo" width={60} height={36} />
           <h2 className="text-2xl font-bold mt-2">
             {isSignIn ? "Login" : "Sign Up"}
           </h2>
-          <p className="text-sm text-gray-400">
-           Library
-          </p>
+          <p className="text-sm text-gray-400">Library</p>
         </div>
 
         <Form {...form}>
@@ -126,6 +123,7 @@ export default function AuthForm({ type }) {
           </form>
         </Form>
 
+       
         <p className="mt-4 text-sm text-center">
           {isSignIn ? "Don't have an account?" : "Already have an account?"}{" "}
           <Link
