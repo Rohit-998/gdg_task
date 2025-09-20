@@ -114,16 +114,14 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
 }
+
 body {
-  @apply bg-black text-white;
+  background-color: transparent;
+  @apply text-white;
 }
 
 .card-border {
-  /* ✅ FIX: REMOVED max-md:hidden and fixed height */
   @apply p-0.5 rounded-2xl w-full;
   background: linear-gradient(145deg, #1a1c20, #08090d);
 }
@@ -134,48 +132,6 @@ body {
 
 .label {
   @apply text-sm font-medium text-gray-100 mb-1;
-}
-
-@utility border-gradient {
-  @apply bg-gradient-to-b from-[#151718] to-[#10111133];
-}
-@utility dark-gradient {
-  @apply bg-gradient-to-b from-[#1A1C20] to-[#08090D];
-}
-
-@utility border-gradient {
-  @apply bg-gradient-to-b from-[#4B4D4F] to-[#4B4D4F33];
-}
-
-@utility pattern {
-  @apply bg-[url('/pattern.png')] bg-top bg-no-repeat;
-}
-
-@utility blue-gradient-dark {
-  @apply bg-gradient-to-b from-[#171532] to-[#08090D];
-}
-
-@utility blue-gradient {
-  @apply bg-gradient-to-l from-[#FFFFFF] to-[#CAC5FE];
-}
-
-@utility flex-center {
-  @apply flex items-center justify-center;
-}
-
-@utility animate-fadeIn {
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
