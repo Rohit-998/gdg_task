@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { signin, signup } from "../controllers/AuthController.js";
+import { logout, signin, signup } from "../controllers/AuthController.js";
 import generalLimiter from "../config/rateLimiter.js";
 
 const authRouter = Router();
@@ -14,4 +14,5 @@ authRouter.use(
 
 authRouter.post("/signup", signup);
 authRouter.post("/login", signin);
+authRouter.post("/logout", logout);
 export default authRouter;

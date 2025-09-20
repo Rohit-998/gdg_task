@@ -2,16 +2,23 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import useIsAdmin from "../hooks/AdminOnly";
 import { Button } from "./ui/button";
+import { logout } from "../../lib/apiClient";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const isAdmin = useIsAdmin();
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setIsOpen(false);
-    navigate("/login");
+   const handleLogout = async () => {
+    try {
+      await logout(); 
+    } catch (error) {
+      console.error("Logout failed", error);
+    } finally {
+      localStorage.removeItem("token");
+      setIsOpen(false);
+      navigate("/login");
+    }
   };
 
   useEffect(() => {
@@ -27,7 +34,7 @@ export default function Navbar() {
   const navLinkClasses =
     "text-lg md:text-sm hover:text-blue-400 transition-colors";
 
-  // Render nothing until the admin status is determined to prevent flicker
+
   if (isAdmin === undefined) {
     return null; 
   }
@@ -57,7 +64,7 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* --- Desktop Menu --- */}
+        
           <div className="hidden md:flex items-center space-x-6">
             <Link to="/" className={navLinkClasses}>
               Home
@@ -66,7 +73,7 @@ export default function Navbar() {
               Dashboard
             </Link>
 
-            {/* ✅ FIXED: Wrapped Admin links in a single check */}
+           
             {isAdmin && (
               <>
                 <Link to="/add-book" className={navLinkClasses}>
@@ -83,7 +90,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* --- Mobile Menu --- */}
+     
         <div className={`md:hidden absolute top-full left-0 w-full bg-slate-900 transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? "max-h-screen py-4" : "max-h-0"}`}>
           <div className="flex flex-col items-center gap-4">
             <Link to="/" className={navLinkClasses} onClick={() => setIsOpen(false)}>
@@ -93,7 +100,7 @@ export default function Navbar() {
               Dashboard
             </Link>
 
-            {/* ✅ FIXED: Wrapped Admin links in a single check for clarity */}
+       ]
             {isAdmin && (
               <>
                 <Link to="/add-book" className={navLinkClasses} onClick={() => setIsOpen(false)}>
