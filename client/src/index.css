@@ -168,9 +168,10 @@ body {
 }
 
 .card-border {
-  @apply bg-[#0e1011] p-0.5 rounded-2xl w-full max-w-md mx-auto;
+  @apply bg-[#0e1011] p-0.5 rounded-2xl flex-1 sm:basis-1/2 w-full max-md:hidden;
   background: linear-gradient(145deg, #1a1c20, #08090d);
 }
+
 
 /* Form container inside */
 .form-container {
