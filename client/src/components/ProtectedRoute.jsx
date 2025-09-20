@@ -1,34 +1,23 @@
 import { Navigate } from "react-router-dom";
-import { getUserDetails } from "../../lib/apiClient";
-import { useEffect, useState } from "react";
+import useAuthStore from "../store/authStore";
 
-export default function ProtectedRoute({ children, adminOnly }) {
-  const token = localStorage.getItem("token");
-  const [role, setRole] = useState(null); 
 
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        const res = await getUserDetails();
+export default function ProtectedRoute({ children, adminOnly = false }) {
+  const isLoading = useAuthStore((state) => state.isLoading);
+  const isAuthenticated = useAuthStore((state) => !!state.user);
+  const isAdmin = useAuthStore((state) => state.user?.role === 'Admin');
 
-     
+  if (isLoading) {
+    return <div className="text-center">Loading...</div>;
+  }
 
-        if (res && res.data && res.data.role) {
-          setRole(res.data.role);
-        }
-      } catch (err) {
-        console.error("Error fetching user details:", err);
-      }
-    };
-    fetchUserDetails();
-  }, []);
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
-  if (!token) return <Navigate to="/login" />;
-
- 
-  if (role === null) return <div>Loading...</div>;
-
-  if (adminOnly && role !== "Admin") return <Navigate to="/" />;
+  if (adminOnly && !isAdmin) {
+    return <Navigate to="/home" replace />;
+  }
 
   return children;
 }

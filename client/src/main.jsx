@@ -4,9 +4,14 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import { Toaster } from "sonner";
+
+
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <BrowserRouter>
-  <Toaster position="top-right" richColors />
-    <App />
-  </BrowserRouter>
+  <React.StrictMode>
+    <BrowserRouter>
+      {/* ✅ Simplified: No provider wrapper needed */}
+      <Toaster position="top-right" richColors />
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
 );

@@ -2,25 +2,19 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import useIsAdmin from "../hooks/AdminOnly";
 import { Button } from "./ui/button";
-import { logout } from "../../lib/apiClient";
+
+import useAuthStore from "../store/authStore";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const logout = useAuthStore((state) => state.logout);
   const isAdmin = useIsAdmin();
 
-   const handleLogout = async () => {
-    try {
-      await logout(); 
-    } catch (error) {
-      console.error("Logout failed", error);
-    } finally {
-      localStorage.removeItem("token");
-      setIsOpen(false);
-      navigate("/login");
-    }
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
   };
-
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
@@ -34,9 +28,8 @@ export default function Navbar() {
   const navLinkClasses =
     "text-lg md:text-sm hover:text-blue-400 transition-colors";
 
-
   if (isAdmin === undefined) {
-    return null; 
+    return null;
   }
 
   return (
@@ -57,14 +50,25 @@ export default function Navbar() {
               className="text-gray-200 focus:outline-none"
             >
               <div className="w-6 h-6 flex flex-col justify-around">
-                <span className={`block w-full h-0.5 bg-gray-200 transition-transform duration-300 ${isOpen ? "rotate-45 translate-y-[5px]" : ""}`} />
-                <span className={`block w-full h-0.5 bg-gray-200 transition-opacity duration-300 ${isOpen ? "opacity-0" : ""}`} />
-                <span className={`block w-full h-0.5 bg-gray-200 transition-transform duration-300 ${isOpen ? "-rotate-45 -translate-y-[5px]" : ""}`} />
+                <span
+                  className={`block w-full h-0.5 bg-gray-200 transition-transform duration-300 ${
+                    isOpen ? "rotate-45 translate-y-[5px]" : ""
+                  }`}
+                />
+                <span
+                  className={`block w-full h-0.5 bg-gray-200 transition-opacity duration-300 ${
+                    isOpen ? "opacity-0" : ""
+                  }`}
+                />
+                <span
+                  className={`block w-full h-0.5 bg-gray-200 transition-transform duration-300 ${
+                    isOpen ? "-rotate-45 -translate-y-[5px]" : ""
+                  }`}
+                />
               </div>
             </button>
           </div>
 
-        
           <div className="hidden md:flex items-center space-x-6">
             <Link to="/" className={navLinkClasses}>
               Home
@@ -73,7 +77,6 @@ export default function Navbar() {
               Dashboard
             </Link>
 
-           
             {isAdmin && (
               <>
                 <Link to="/add-book" className={navLinkClasses}>
@@ -90,28 +93,50 @@ export default function Navbar() {
           </div>
         </div>
 
-     
-        <div className={`md:hidden absolute top-full left-0 w-full bg-slate-900 transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? "max-h-screen py-4" : "max-h-0"}`}>
+        <div
+          className={`md:hidden absolute top-full left-0 w-full bg-slate-900 transition-all duration-300 ease-in-out overflow-hidden ${
+            isOpen ? "max-h-screen py-4" : "max-h-0"
+          }`}
+        >
           <div className="flex flex-col items-center gap-4">
-            <Link to="/" className={navLinkClasses} onClick={() => setIsOpen(false)}>
+            <Link
+              to="/"
+              className={navLinkClasses}
+              onClick={() => setIsOpen(false)}
+            >
               Home
             </Link>
-            <Link to="/dashboard" className={navLinkClasses} onClick={() => setIsOpen(false)}>
+            <Link
+              to="/dashboard"
+              className={navLinkClasses}
+              onClick={() => setIsOpen(false)}
+            >
               Dashboard
             </Link>
-
-       ]
+            
             {isAdmin && (
               <>
-                <Link to="/add-book" className={navLinkClasses} onClick={() => setIsOpen(false)}>
+                <Link
+                  to="/add-book"
+                  className={navLinkClasses}
+                  onClick={() => setIsOpen(false)}
+                >
                   Add Book
                 </Link>
-                <Link to="/analytics" className={navLinkClasses} onClick={() => setIsOpen(false)}>
+                <Link
+                  to="/analytics"
+                  className={navLinkClasses}
+                  onClick={() => setIsOpen(false)}
+                >
                   Analytics
                 </Link>
               </>
             )}
-            <Button onClick={handleLogout} variant="destructive" className="mt-2">
+            <Button
+              onClick={handleLogout}
+              variant="destructive"
+              className="mt-2"
+            >
               Logout
             </Button>
           </div>

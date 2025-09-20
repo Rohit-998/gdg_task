@@ -13,7 +13,9 @@ import {
 } from "../components/ui/form";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { signin, signup } from "../../lib/apiClient";
+
+import useAuthStore from "../store/authStore";
+
 
 const getAuthSchema = (type) =>
   z.object({
@@ -44,7 +46,9 @@ const FormField = ({ control, name, label, placeholder, type = "text" }) => (
 );
 
 export default function AuthForm({ type }) {
+  
   const navigate = useNavigate();
+  const { login, signup } = useAuthStore.getState();
   const isSignIn = type === "signIn";
 
   const form = useForm({
@@ -58,27 +62,21 @@ export default function AuthForm({ type }) {
 
   const onSubmit = async (data) => {
     try {
-      const res = isSignIn ? await signin(data) : await signup(data);
-
-      if (res.data?.token) {
-        localStorage.setItem("token", res.data.token);
-        toast.success(
-          isSignIn ? "Login successful!" : "Account created successfully!"
-        );
-        navigate("/home"); // Navigate to home after successful auth
-      } else {
-        toast.error("Authentication failed. Please try again.");
+     isSignIn ? await login(data) : await signup(data);
+    toast.success(
+        isSignIn ? "Login successful!" : "Account created successfully!"
+      );
+        navigate("/home"); 
+      } catch (error) {
+        console.error("Auth Error:", error);
+        toast.error(error.response?.data?.message || "Something went wrong!");
       }
-    } catch (error) {
-      console.error("Auth Error:", error);
-      toast.error(error.response?.data?.message || "Something went wrong!");
-    }
   };
 
   return (
-    // ✅ FIX: Added px-4 for padding on small screens
+   
     <div className="flex items-center justify-center min-h-[70vh] px-4">
-      {/* ✅ FIX: Refactored to a responsive structure */}
+  
       <div className="card-border w-full max-w-md">
         <div className="form-container">
           <div className="flex flex-col items-center mb-6">

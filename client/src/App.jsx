@@ -11,7 +11,7 @@ import Analytics from "./pages/Analytics";
 
 import { Background } from "./components/Background";
 import SignUp from "./pages/Signup";
-
+import useAuthStore from "./store/authStore";
 
 export default function App() {
   const location = useLocation();
@@ -19,8 +19,16 @@ export default function App() {
   const hideNavbarRoutes = ["/login", "/signup"];
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
 
- 
-  const isAuthenticated = !!localStorage.getItem("token");
+  const isLoading = useAuthStore((state) => state.isLoading);
+  const isAuthenticated = useAuthStore((state) => !!state.user);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black">
+        <p className="text-white">Loading Application...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col relative">
@@ -29,7 +37,6 @@ export default function App() {
       {!shouldHideNavbar && <Navbar />}
       <main className="flex-grow relative z-10 container mx-auto p-4">
         <Routes>
-       
           <Route
             path="/"
             element={
@@ -77,11 +84,9 @@ export default function App() {
             }
           />
 
-          
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </main>
-      
     </div>
   );
 }
