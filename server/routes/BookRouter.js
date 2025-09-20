@@ -5,11 +5,12 @@ import {
   addBook,
   updateBook,
   deleteBook,
-  getBookAnalytics,
+ 
 
-  getBooksExtendedQuery,
+
   borrowBook,
   returnBook,
+  getBookAnalytics,
 } from "../controllers/BookController.js";
 import { isAdmin } from "../middleware/isAdmin.js";
 import { verifyToken } from "../middleware/verifyToken.js";

@@ -3,7 +3,7 @@ import Book from "../models/bookModel.js";
 
 export const getAllBooks = async (req, res) => {
   try {
-    const { category, author, search, page = 1, limit = 10, sortBy, order } = req.query;
+    const { category, author, search, page = 1, limit = 9, sortBy, order } = req.query;
     const cacheKey = `books_all_${category || "all"}_${author || "all"}_${search || "all"}_${page}_${limit}_${sortBy || "title"}_${order || "asc"}`;
     const cached = await redis.get(cacheKey);
     if (cached) {
@@ -32,7 +32,7 @@ export const getAllBooks = async (req, res) => {
       currentPage: parseInt(page),
       totalBooks: count,
     };
-    await redis.set(cacheKey, JSON.stringify(response), "EX", 600);
+    await redis.set(cacheKey, JSON.stringify(response), "EX", 300);
     res.status(200).json(response);
   } catch (error) {
     console.error("Error fetching books:", error);
@@ -137,6 +137,29 @@ export const returnBook = async (req, res) => {
     res.status(200).json({ message: "Book returned successfully", book });
   } catch (error) {
     console.error("Error returning book:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getBookAnalytics = async (req, res) => {
+  try {
+    const cacheKey = "books_analytics";
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      return res.status(200).json(JSON.parse(cached));
+    }
+    const totalBooks = await Book.countDocuments();
+    const availableBooks = await Book.countDocuments({ available: true });
+    const borrowedBooks = totalBooks - availableBooks;
+    const genres = await Book.aggregate([
+      { $group: { _id: "$genre", count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+    const response = { totalBooks, availableBooks, borrowedBooks, genres };
+    await redis.set(cacheKey, JSON.stringify(response), "EX", 300);
+    res.status(200).json(response);
+  } catch (error) {
+    console.error("Error in analytics:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
