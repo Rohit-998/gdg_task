@@ -15,7 +15,7 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { signin, signup } from "../../lib/apiClient";
 
-// ✅ Dynamic schema: Name required only for SignUp
+
 const getAuthSchema = (type) =>
   z.object({
     name:
@@ -28,7 +28,7 @@ const getAuthSchema = (type) =>
       .min(6, { message: "Password must be at least 6 characters" }),
   });
 
-// ✅ FormField wrapper
+
 const FormField = ({ control, name, label, placeholder, type = "text" }) => (
   <Controller
     name={name}

@@ -15,7 +15,7 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { addBook } from "../../lib/apiClient";
 
-// ✅ Validation schema
+
 const bookSchema = z.object({
   title: z.string().min(2, { message: "Title is required" }),
   author: z.string().min(2, { message: "Author is required" }),
@@ -29,7 +29,7 @@ const bookSchema = z.object({
   genre: z.string().min(2, { message: "Genre is required" }),
 });
 
-// ✅ Reusable FormField wrapper
+
 const FormField = ({ control, name, label, placeholder, type = "text" }) => (
   <Controller
     name={name}

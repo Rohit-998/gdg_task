@@ -5,7 +5,7 @@ import useIsAdmin from "./AdminOnly";
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const isAdmin = useIsAdmin(); // ✅ Call the hook here
+  const isAdmin = useIsAdmin(); 
 
   const handleLogout = () => {
     localStorage.removeItem("token");

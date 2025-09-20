@@ -173,12 +173,11 @@ body {
 }
 
 
-/* Form container inside */
 .form-container {
   @apply bg-[#000000c0] rounded-2xl shadow-md p-6;
 }
 
-/* Optional: labels look cleaner */
+
 .label {
   @apply text-sm font-medium text-gray-100 mb-1;
 }

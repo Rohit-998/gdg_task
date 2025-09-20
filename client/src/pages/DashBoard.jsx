@@ -27,7 +27,7 @@ const handleDelete = async (id) => {
   }
 };
 const handleUpdate = async (book) => {
-  // Ask user for new values
+
   const newTitle = prompt("Enter new title:", book.title);
   const newAuthor = prompt("Enter new author:", book.author);
   const newGenre = prompt("Enter new genre:", book.genre);

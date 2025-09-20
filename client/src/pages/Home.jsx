@@ -130,7 +130,7 @@ export default function Home() {
             <BookCard
               key={book._id}
               book={book}
-              onBorrow={handleBorrow} // ✅ pass handler
+              onBorrow={handleBorrow} 
             />
           ))}
         </div>

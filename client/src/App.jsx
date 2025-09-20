@@ -16,11 +16,10 @@ import SignUp from "./pages/Signup";
 export default function App() {
   const location = useLocation();
 
-  // Hide navbar on login/signup
   const hideNavbarRoutes = ["/login", "/signup"];
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
 
-  // ✅ Check if user is logged in
+ 
   const isAuthenticated = !!localStorage.getItem("token");
 
   return (
@@ -30,7 +29,7 @@ export default function App() {
       {!shouldHideNavbar && <Navbar />}
       <main className="flex-grow relative z-10 container mx-auto p-4">
         <Routes>
-          {/* 👇 If logged in -> go to /home, else -> go to /login */}
+       
           <Route
             path="/"
             element={
@@ -78,7 +77,7 @@ export default function App() {
             }
           />
 
-          {/* 👇 Any unknown path goes to login */}
+          
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </main>
