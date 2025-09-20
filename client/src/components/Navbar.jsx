@@ -1,74 +1,92 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useIsAdmin from "./AdminOnly";
+import { Button } from "./ui/button"; // Using your button component
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const isAdmin = useIsAdmin(); 
+  const isAdmin = useIsAdmin();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    setIsOpen(false); // Close menu on logout
     navigate("/login");
   };
 
+  // Close the mobile menu when the screen is resized to be larger
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const navLinkClasses = "text-lg md:text-sm hover:text-blue-400 transition-colors";
+
   return (
-    <nav className="shadow-md sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <Link to="/" className="text-xl font-bold text-purple-400">
-          <img
-            src="/logo.png"
-            alt="Library Hub Logo"
-            className="inline-block w-8 h-8 mr-2"
-          />
-          Library Hub
-        </Link>
-
-        <button
-          className="md:hidden text-gray-200"
-          onClick={() => setOpen(!open)}
-        >
-          ☰
-        </button>
-
-        <div
-          className={`${
-            open ? "block" : "hidden"
-          } md:flex space-x-6 items-center`}
-        >
-          <Link to="/" className="hover:text-blue-400">
-            Home
+    <nav className="bg-gray-900/50 backdrop-blur-sm shadow-md sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-3">
+        <div className="flex justify-between items-center">
+          {/* Logo */}
+          <Link to="/" className="text-xl font-bold text-purple-400 flex items-center gap-2">
+            <img
+              src="/logo.png"
+              alt="Library Hub Logo"
+              className="w-8 h-8"
+            />
+            Library Hub
           </Link>
 
-          <Link to="/dashboard" className="hover:text-blue-400">
-            Dashboard
-          </Link>
-          <Link to="/add-book" className="hover:text-blue-400">
-            Add Book
-          </Link>
-          {isAdmin && (
-            <Link to="/analytics" className="hover:text-blue-400">
-              Analytics
-            </Link>
-          )}
-
-          {localStorage.getItem("token") ? (
+          {/* Hamburger Menu Button (Mobile) */}
+          <div className="md:hidden">
             <button
-              onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded-md"
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-gray-200 focus:outline-none"
             >
-              Logout
+              {/* Animated Hamburger/Close Icon */}
+              <div className="w-6 h-6 flex flex-col justify-around">
+                <span className={`block w-full h-0.5 bg-gray-200 transition-transform duration-300 ${isOpen ? "rotate-45 translate-y-[5px]" : ""}`} />
+                <span className={`block w-full h-0.5 bg-gray-200 transition-opacity duration-300 ${isOpen ? "opacity-0" : ""}`} />
+                <span className={`block w-full h-0.5 bg-gray-200 transition-transform duration-300 ${isOpen ? "-rotate-45 -translate-y-[5px]" : ""}`} />
+              </div>
             </button>
-          ) : (
-            <>
-              <Link to="/login" className="hover:text-blue-400">
-                Login
-              </Link>
-              <Link to="/signup" className="hover:text-blue-400">
-                Signup
-              </Link>
-            </>
-          )}
+          </div>
+
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center space-x-6">
+            <Link to="/" className={navLinkClasses}>Home</Link>
+            <Link to="/dashboard" className={navLinkClasses}>Dashboard</Link>
+            <Link to="/add-book" className={navLinkClasses}>Add Book</Link>
+            {isAdmin && (
+              <Link to="/analytics" className={navLinkClasses}>Analytics</Link>
+            )}
+            <Button onClick={handleLogout} variant="destructive" size="sm">
+              Logout
+            </Button>
+          </div>
+        </div>
+
+        {/* Mobile Menu (Overlay) */}
+        <div
+          className={`md:hidden absolute top-full left-0 w-full bg-slate-900 transition-all duration-300 ease-in-out overflow-hidden ${
+            isOpen ? "max-h-screen py-4" : "max-h-0"
+          }`}
+        >
+          <div className="flex flex-col items-center gap-4">
+            <Link to="/" className={navLinkClasses} onClick={() => setIsOpen(false)}>Home</Link>
+            <Link to="/dashboard" className={navLinkClasses} onClick={() => setIsOpen(false)}>Dashboard</Link>
+            <Link to="/add-book" className={navLinkClasses} onClick={() => setIsOpen(false)}>Add Book</Link>
+            {isAdmin && (
+              <Link to="/analytics" className={navLinkClasses} onClick={() => setIsOpen(false)}>Analytics</Link>
+            )}
+            <Button onClick={handleLogout} variant="destructive" className="mt-2">
+              Logout
+            </Button>
+          </div>
         </div>
       </div>
     </nav>
