@@ -123,7 +123,9 @@ body {
 }
 
 .card-border {
-  @apply bg-[#0e1011] p-0.5 rounded-2xl flex-1 sm:basis-1/2 w-full h-[400px] max-md:hidden;
+  /* No more max-md:hidden or fixed height! */
+  @apply p-0.5 rounded-2xl w-full;
+  background: linear-gradient(145deg, #1a1c20, #08090d);
 }
 @utility border-gradient {
   @apply bg-gradient-to-b from-[#151718] to-[#10111133];
