@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import BookCard from "../components/BookCard";
-import { getBooks, borrowBook } from "../../lib/apiClient"; // ✅ include borrowBook
-import { toast } from "sonner"; // ✅ notifications
+import { getBooks, borrowBook } from "../../lib/apiClient"; 
+import { toast } from "sonner";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import {
@@ -16,27 +16,26 @@ export default function Home() {
   const [books, setBooks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // State for search term
+
   const [searchTerm, setSearchTerm] = useState("");
 
-  // State for sorting
+
   const [sortBy, setSortBy] = useState("title");
   const [order, setOrder] = useState("asc");
 
-  // State for pagination
+
   const [pagination, setPagination] = useState({
     page: 1,
     totalPages: 1,
     totalBooks: 0,
   });
 
-  // ✅ Handle Borrow Book
+
   const handleBorrow = async (bookId) => {
     try {
       await borrowBook(bookId);
       toast.success("Book borrowed successfully!");
 
-      // update the UI instantly
       setBooks((currentBooks) =>
         currentBooks.map((book) =>
           book._id === bookId ? { ...book, available: false } : book
@@ -48,7 +47,6 @@ export default function Home() {
     }
   };
 
-  // Fetch books whenever filters, sorting, or page changes
   useEffect(() => {
     const fetchBooks = async () => {
       setIsLoading(true);
@@ -75,7 +73,7 @@ export default function Home() {
       }
     };
 
-    // debounce search
+
     const timerId = setTimeout(() => {
       fetchBooks();
     }, 500);
@@ -93,7 +91,7 @@ export default function Home() {
     <div>
       <h1 className="text-3xl font-bold mb-6">Available Books</h1>
 
-      {/* -- Filter and Sort Controls -- */}
+   
       <div className="flex flex-wrap gap-4 items-center justify-between mb-8 p-4 bg-slate-900/50 rounded-lg">
         <Input
           placeholder="Search by title..."
@@ -124,7 +122,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* -- Books Grid -- */}
       {isLoading ? (
         <p className="text-center">Loading books...</p>
       ) : books.length > 0 ? (
@@ -141,7 +138,7 @@ export default function Home() {
         <p className="text-center py-10">No books found.</p>
       )}
 
-      {/* -- Pagination Controls -- */}
+      
       <div className="flex items-center justify-center gap-4 mt-8">
         <Button
           onClick={() => handlePageChange(pagination.page - 1)}

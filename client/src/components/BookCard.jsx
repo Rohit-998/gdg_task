@@ -1,7 +1,6 @@
 import useIsAdmin from "./AdminOnly";
-import { Button } from "./ui/button"; // A nice-looking button
+import { Button } from "./ui/button";
 
-// ✅ Add onBorrow to the props
 export default function BookCard({ book, onDelete, onUpdate, onBorrow }) {
   const isAdmin = useIsAdmin();
   return (
@@ -21,18 +20,16 @@ export default function BookCard({ book, onDelete, onUpdate, onBorrow }) {
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
-        {/* ✅ ADD BORROW BUTTON LOGIC */}
-        {onBorrow && book.available && !isAdmin && (
+        {onBorrow && book.available &&  (
           <Button
             onClick={() => onBorrow(book._id)}
             className="flex-grow"
-            variant="default" // Primary button style
+            variant="default"
           >
             Borrow
           </Button>
         )}
 
-        {/* Admin buttons */}
         {isAdmin && onUpdate && (
           <Button
             onClick={() => onUpdate(book)}
