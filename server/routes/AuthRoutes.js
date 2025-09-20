@@ -6,8 +6,8 @@ const authRouter = Router();
 
 authRouter.use(
   generalLimiter(
-    5 * 60 * 1000, 
-    5, 
+    5 * 60 * 1000,
+    10,
     "Too many login attempts, please try again later."
   )
 );
@@ -15,4 +15,5 @@ authRouter.use(
 authRouter.post("/signup", signup);
 authRouter.post("/login", signin);
 authRouter.post("/logout", logout);
+
 export default authRouter;

@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import BookCard from "../components/BookCard";
-
-import { getBooks, getDashboardBooks, returnBook, deleteBook, updateBook } from "../../lib/apiClient";
-import useIsAdmin from "../components/AdminOnly";
+import useIsAdmin from "../hooks/AdminOnly";
+import { getBooks, getDashboardBooks, returnBook, deleteBook, updateBook } from "../lib/apiClient";
 
 export default function Dashboard() {
   const [books, setBooks] = useState([]);
@@ -17,8 +16,7 @@ export default function Dashboard() {
       const res = isAdmin ? await getBooks() : await getDashboardBooks();
       setBooks(res.data.books || []);
     } catch (err) {
-      console.error("Error fetching books:", err);
-      toast.error("Could not fetch books.");
+      toast.error("Could not fetch dashboard books.");
     } finally {
       setIsLoading(false);
     }
@@ -41,31 +39,17 @@ export default function Dashboard() {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to permanently delete this book?")) return;
-    try {
-      await deleteBook(id);
-      toast.success("Book deleted successfully!");
-      fetchData();
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to delete book.");
-    }
+    await deleteBook(id);
+    toast.success("Book deleted!");
+    fetchData();
   };
 
   const handleUpdate = async (book) => {
     const newTitle = prompt("Enter new title:", book.title);
-    if (!newTitle) return;
-    const newAuthor = prompt("Enter new author:", book.author);
-    if (!newAuthor) return;
-    try {
-      await updateBook(book._id, {
-        ...book,
-        title: newTitle,
-        author: newAuthor,
-      });
-      toast.success("Book updated successfully!");
+    if (newTitle) {
+      await updateBook(book._id, { ...book, title: newTitle });
+      toast.success("Book updated!");
       fetchData();
-    } catch (err) {
-      toast.error("Failed to update book!");
-      console.error(err);
     }
   };
 

@@ -11,7 +11,7 @@ export const verifyToken = (req, res, next) => {
       console.error("JWT verification error:", err);
       return res.status(403).json({ message: "Forbidden: Invalid token" });
     }
-    req.user = decodedPayload; 
+    req.user = decodedPayload;
     next();
   });
 };

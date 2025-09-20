@@ -4,7 +4,7 @@ import {
   signin as signinApi, 
   signup as signupApi, 
   logout as logoutApi 
-} from '../../lib/apiClient';
+} from '../lib/apiClient';
 
 const useAuthStore = create((set) => ({
   user: null,

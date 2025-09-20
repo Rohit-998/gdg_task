@@ -1,13 +1,9 @@
 import { Router } from "express";
-
 import {
   getAllBooks,
   addBook,
   updateBook,
   deleteBook,
- 
-
-
   borrowBook,
   returnBook,
   getBookAnalytics,
@@ -15,22 +11,22 @@ import {
 import { isAdmin } from "../middleware/isAdmin.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 import generalLimiter from "../config/rateLimiter.js";
+
 const bookRouter = Router();
+
 bookRouter.use(
   generalLimiter(
-    15 * 60 * 1000, 
-    100, 
+    15 * 60 * 1000,
+    100,
     "Too many requests, please slow down."
   )
 );
 
 bookRouter.get("/", verifyToken, getAllBooks);
-bookRouter.post("/addbook", verifyToken, addBook);
+bookRouter.post("/addbook", verifyToken, isAdmin, addBook);
 bookRouter.put("/updatebook/:id", verifyToken, isAdmin, updateBook);
 bookRouter.delete("/deletebook/:id", verifyToken, isAdmin, deleteBook);
 bookRouter.get("/analytics", verifyToken, isAdmin, getBookAnalytics);
-
-
 bookRouter.post("/borrow/:id", verifyToken, borrowBook);
 bookRouter.post("/return/:id", verifyToken, returnBook);
 

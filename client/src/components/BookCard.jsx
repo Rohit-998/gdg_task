@@ -1,5 +1,4 @@
-
-import useIsAdmin from "./AdminOnly";
+import useIsAdmin from "../hooks/AdminOnly";
 import { Button } from "./ui/button";
 
 export default function BookCard({ book, onDelete, onUpdate, onBorrow, onReturn }) {
@@ -10,15 +9,16 @@ export default function BookCard({ book, onDelete, onUpdate, onBorrow, onReturn 
     : "https://via.placeholder.com/150x220.png?text=No+Cover";
 
   return (
-    <div className="bg-gray-800/50 p-4 rounded-lg shadow-lg flex flex-col justify-between">
+    <div className="bg-gray-800 p-4 rounded-lg shadow-lg flex flex-col justify-between">
       <img
         src={coverUrl}
         alt={`${book.title} cover`}
         className="w-full h-60 object-contain rounded-md mb-4"
+        onError={(e) => { e.target.onerror = null; e.target.src="https://via.placeholder.com/150x220.png?text=No+Cover" }}
       />
       <div>
-        <h3 className="text-xl font-bold text-blue-300 mb-2">{book.title}</h3>
-        <p className="text-sm text-gray-400">👤 Author: {book.author}</p>
+        <h3 className="text-xl font-bold text-blue-300 mb-2 truncate">{book.title}</h3>
+        <p className="text-sm text-gray-400 truncate">👤 Author: {book.author}</p>
         <p className="text-sm text-gray-400">
           📅 Published: {book.publishedDate ? new Date(book.publishedDate).toLocaleDateString() : "N/A"}
         </p>

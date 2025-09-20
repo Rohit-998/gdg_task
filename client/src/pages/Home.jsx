@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import BookCard from "../components/BookCard";
-
-import { getBooks, borrowBook, returnBook, deleteBook, updateBook } from "../../lib/apiClient";
+import useIsAdmin from "../hooks/AdminOnly";
+import { getBooks, borrowBook, returnBook, deleteBook, updateBook } from "../lib/apiClient";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import useIsAdmin from "../components/AdminOnly";
 
 export default function Home() {
   const [books, setBooks] = useState([]);
@@ -57,11 +56,14 @@ export default function Home() {
     toast.success("Book returned by Admin!");
     fetchData();
   };
+
   const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to permanently delete this book?")) return;
     await deleteBook(id);
     toast.success("Book deleted!");
     fetchData();
   };
+
   const handleUpdate = async (book) => {
     const newTitle = prompt("Enter new title:", book.title);
     if (newTitle) {
@@ -80,16 +82,16 @@ export default function Home() {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Library Catalog</h1>
-      <div className="flex flex-wrap gap-4 items-center justify-between mb-8 p-4 bg-slate-900/50 rounded-lg">
+      <div className="flex flex-wrap gap-4 items-center justify-between mb-8 p-4 bg-gray-800 rounded-lg">
         <Input
           placeholder="Search by title..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-xs"
+          className="max-w-xs bg-gray-700 border-gray-600"
         />
         <div className="flex gap-2">
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-[180px]"><SelectValue placeholder="Sort by" /></SelectTrigger>
+            <SelectTrigger className="w-[180px] bg-gray-700 border-gray-600"><SelectValue placeholder="Sort by" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="title">Title</SelectItem>
               <SelectItem value="author">Author</SelectItem>
@@ -97,7 +99,7 @@ export default function Home() {
             </SelectContent>
           </Select>
           <Select value={order} onValueChange={setOrder}>
-            <SelectTrigger className="w-[120px]"><SelectValue placeholder="Order" /></SelectTrigger>
+            <SelectTrigger className="w-[120px] bg-gray-700 border-gray-600"><SelectValue placeholder="Order" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="asc">Ascending</SelectItem>
               <SelectItem value="desc">Descending</SelectItem>
@@ -109,7 +111,7 @@ export default function Home() {
       {isLoading ? <p className="text-center">Loading books...</p> : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {books.map((book) => (
+            {books.length > 0 ? books.map((book) => (
               <BookCard
                 key={book._id}
                 book={book}
@@ -118,13 +120,16 @@ export default function Home() {
                 onDelete={isAdmin ? handleDelete : null}
                 onUpdate={isAdmin ? handleUpdate : null}
               />
-            ))}
+            )) : <p className="col-span-3 text-center">No books found.</p>}
           </div>
-          <div className="flex items-center justify-center gap-4 mt-8">
-            <Button onClick={() => handlePageChange(pagination.page - 1)} disabled={pagination.page <= 1}>Previous</Button>
-            <span>Page {pagination.page} of {pagination.totalPages}</span>
-            <Button onClick={() => handlePageChange(pagination.page + 1)} disabled={pagination.page >= pagination.totalPages}>Next</Button>
-          </div>
+
+          {pagination.totalPages > 1 && (
+            <div className="flex items-center justify-center gap-4 mt-8">
+              <Button onClick={() => handlePageChange(pagination.page - 1)} disabled={pagination.page <= 1}>Previous</Button>
+              <span>Page {pagination.page} of {pagination.totalPages}</span>
+              <Button onClick={() => handlePageChange(pagination.page + 1)} disabled={pagination.page >= pagination.totalPages}>Next</Button>
+            </div>
+          )}
         </>
       )}
     </div>
