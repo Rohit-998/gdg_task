@@ -2,25 +2,27 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import BookCard from "../components/BookCard";
 import useIsAdmin from "../hooks/AdminOnly";
-import {
-  getBooks,
-  getDashboardBooks,
-  returnBook,
-  deleteBook,
-  updateBook,
-} from "../lib/apiClient";
+import { getBooks, getDashboardBooks, returnBook, deleteBook, updateBook } from "../lib/apiClient";
+import { Button } from "../components/ui/button";
 
 export default function Dashboard() {
   const [books, setBooks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const isAdmin = useIsAdmin();
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1 });
+
   const fetchData = async () => {
     if (isAdmin === undefined) return;
     setIsLoading(true);
     try {
-      const res = isAdmin ? await getBooks() : await getDashboardBooks();
+      const params = { page: pagination.page, limit: 9 };
+      const res = isAdmin ? await getBooks(params) : await getDashboardBooks(params);
+      
       setBooks(res.data.books || []);
+      setPagination(prev => ({
+        ...prev,
+        totalPages: res.data.totalPages || 1,
+      }));
     } catch (err) {
       toast.error("Could not fetch dashboard books.");
     } finally {
@@ -30,7 +32,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchData();
-  }, [isAdmin]);
+  }, [isAdmin, pagination.page]);
 
   const handleReturn = async (bookId) => {
     if (!window.confirm("Are you sure you want to return this book?")) return;
@@ -44,10 +46,7 @@ export default function Dashboard() {
   };
 
   const handleDelete = async (id) => {
-    if (
-      !window.confirm("Are you sure you want to permanently delete this book?")
-    )
-      return;
+    if (!window.confirm("Are you sure you want to permanently delete this book?")) return;
     await deleteBook(id);
     toast.success("Book deleted!");
     fetchData();
@@ -61,9 +60,10 @@ export default function Dashboard() {
       fetchData();
     }
   };
+
   const handlePageChange = (newPage) => {
     if (newPage > 0 && newPage <= pagination.totalPages) {
-      setPagination((prev) => ({ ...prev, page: newPage }));
+      setPagination(prev => ({ ...prev, page: newPage }));
     }
   };
 
@@ -78,31 +78,32 @@ export default function Dashboard() {
       </h1>
 
       {books.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {books.map((book) => (
-            <BookCard
-              key={book._id}
-              book={book}
-              onReturn={handleReturn}
-              onDelete={isAdmin ? handleDelete : null}
-              onUpdate={isAdmin ? handleUpdate : null}
-            />
-          ))}
-        </div>
-      ) : (
-        <p className="text-center text-gray-400 py-10">
-          {isAdmin
-            ? "There are no books in the library."
-            : "You haven't borrowed any books yet."}
-        </p>
-      )}
-       {pagination.totalPages > 1 && (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {books.map((book) => (
+              <BookCard
+                key={book._id}
+                book={book}
+                onReturn={handleReturn}
+                onDelete={isAdmin ? handleDelete : null}
+                onUpdate={isAdmin ? handleUpdate : null}
+              />
+            ))}
+          </div>
+
+          {pagination.totalPages > 1 && (
             <div className="flex items-center justify-center gap-4 mt-8">
               <Button onClick={() => handlePageChange(pagination.page - 1)} disabled={pagination.page <= 1}>Previous</Button>
               <span>Page {pagination.page} of {pagination.totalPages}</span>
               <Button onClick={() => handlePageChange(pagination.page + 1)} disabled={pagination.page >= pagination.totalPages}>Next</Button>
             </div>
           )}
+        </>
+      ) : (
+        <p className="text-center text-gray-400 py-10">
+          {isAdmin ? "There are no books in the library." : "You haven't borrowed any books yet."}
+        </p>
+      )}
     </div>
   );
 }
