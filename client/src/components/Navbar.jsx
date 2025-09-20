@@ -61,7 +61,7 @@ export default function Navbar() {
             <Button onClick={handleLogout} variant="destructive" size="sm">Logout</Button>
           </div>
         </div>
-        <div className={`md:hidden absolute top-full left-0 w-full bg-gray-700/90 backdrop-blur-sm transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? "max-h-screen py-4 border-t border-gray-600" : "max-h-0"}`}>
+        <div className={`md:hidden absolute top-full left-0 w-full  backdrop-blur-sm transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? "max-h-screen py-4 border-t " : "max-h-0"}`}>
           <div className="flex flex-col items-center gap-4">
             <Link to="/home" className={navLinkClasses} onClick={closeMenu}>Home</Link>
             <Link to="/dashboard" className={navLinkClasses} onClick={closeMenu}>Dashboard</Link>

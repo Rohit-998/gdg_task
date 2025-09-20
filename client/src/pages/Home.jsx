@@ -87,7 +87,7 @@ export default function Home() {
           placeholder="Search by title..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-xs bg-gray-700 border-gray-600"
+          className="max-w-xs  border-gray-950"
         />
         <div className="flex gap-2">
           <Select value={sortBy} onValueChange={setSortBy}>
