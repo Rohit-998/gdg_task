@@ -8,6 +8,7 @@ export default function useIsAdmin() {
         const fetchUserDetails = async () => {
             try {
                 const res = await getUserDetails();
+                console.log("User details:", res);
                 setIsAdmin(res?.data?.role === "Admin");
             } catch (err) {
                 setIsAdmin(false);
