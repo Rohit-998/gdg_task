@@ -1,3 +1,4 @@
+import React, { lazy, Suspense } from "react"; // ✅ Import lazy and Suspense
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
@@ -8,7 +9,11 @@ import AddBook from "./pages/AddBook";
 import Analytics from "./pages/Analytics";
 import SignUp from "./pages/SignUp";
 import useAuthStore from "./store/authStore";
-import { Background } from "./components/Background";
+
+// ✅ 1. Dynamically import the Background component
+const Background = lazy(() =>
+  import("./components/Background").then((module) => ({ default: module.Background }))
+);
 
 export default function App() {
   const location = useLocation();
@@ -28,7 +33,12 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col text-white">
-      <Background />
+      {/* ✅ 2. Wrap the Background component in Suspense */}
+      {/* This ensures it only loads on the client-side */}
+      <Suspense fallback={null}>
+        <Background />
+      </Suspense>
+      
       {!shouldHideNavbar && <Navbar />}
       <main className="flex-grow container mx-auto p-4">
         <Routes>
