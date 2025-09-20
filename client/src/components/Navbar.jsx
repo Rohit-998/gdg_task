@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import useIsAdmin from "./AdminOnly";
-import { Button } from "./ui/button"; // Using your button component
+import { Button } from "./ui/button";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,11 +10,11 @@ export default function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    setIsOpen(false); // Close menu on logout
+    setIsOpen(false); 
     navigate("/login");
   };
 
-  // Close the mobile menu when the screen is resized to be larger
+ 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
@@ -31,7 +31,7 @@ export default function Navbar() {
     <nav className="bg-gray-900/50 backdrop-blur-sm shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
-          {/* Logo */}
+    
           <Link to="/" className="text-xl font-bold text-purple-400 flex items-center gap-2">
             <img
               src="/logo.png"
@@ -41,13 +41,13 @@ export default function Navbar() {
             Library Hub
           </Link>
 
-          {/* Hamburger Menu Button (Mobile) */}
+     
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-gray-200 focus:outline-none"
             >
-              {/* Animated Hamburger/Close Icon */}
+             
               <div className="w-6 h-6 flex flex-col justify-around">
                 <span className={`block w-full h-0.5 bg-gray-200 transition-transform duration-300 ${isOpen ? "rotate-45 translate-y-[5px]" : ""}`} />
                 <span className={`block w-full h-0.5 bg-gray-200 transition-opacity duration-300 ${isOpen ? "opacity-0" : ""}`} />
@@ -70,7 +70,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Menu (Overlay) */}
+    
         <div
           className={`md:hidden absolute top-full left-0 w-full bg-slate-900 transition-all duration-300 ease-in-out overflow-hidden ${
             isOpen ? "max-h-screen py-4" : "max-h-0"
@@ -79,7 +79,7 @@ export default function Navbar() {
           <div className="flex flex-col items-center gap-4">
             <Link to="/" className={navLinkClasses} onClick={() => setIsOpen(false)}>Home</Link>
             <Link to="/dashboard" className={navLinkClasses} onClick={() => setIsOpen(false)}>Dashboard</Link>
-            <Link to="/add-book" className={navLinkClasses} onClick={() => setIsOpen(false)}>Add Book</Link>
+           {isAdmin && <Link to="/add-book" className={navLinkClasses} onClick={() => setIsOpen(false)}>Add Book</Link>}
             {isAdmin && (
               <Link to="/analytics" className={navLinkClasses} onClick={() => setIsOpen(false)}>Analytics</Link>
             )}

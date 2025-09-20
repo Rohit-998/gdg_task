@@ -211,8 +211,12 @@ export const paginateBooks = async (req, res) => {
   }
 };
 
+
+
 export const borrowBook = async (req, res) => {
   const { id } = req.params;
+  const userId = req.user.userId; 
+
   try {
     const book = await Book.findById(id);
     if (!book) {
@@ -221,11 +225,53 @@ export const borrowBook = async (req, res) => {
     if (!book.available) {
       return res.status(400).json({ message: "Book is currently unavailable" });
     }
+
+  
     book.available = false;
+    book.borrowedBy = userId;
     await book.save();
-    res.status(200).json({ message: "Book borrowed successfully" });
+
+    await redis.flushall(); 
+
+    res.status(200).json({ message: "Book borrowed successfully", book });
   } catch (error) {
     console.error("Error borrowing book:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+export const returnBook = async (req, res) => {
+  const { id } = req.params; 
+  const { userId, role } = req.user; 
+
+  try {
+    const book = await Book.findById(id);
+
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+
+ 
+    if (book.available) {
+        return res.status(400).json({ message: "This book is already available." });
+    }
+
+   
+    if (role !== 'Admin' && (!book.borrowedBy || book.borrowedBy.toString() !== userId)) {
+      return res.status(403).json({ message: "You cannot return this book." });
+    }
+
+
+    book.available = true;
+    book.borrowedBy = null;
+    await book.save();
+
+    await redis.flushall(); 
+
+    res.status(200).json({ message: "Book returned successfully", book });
+  } catch (error) {
+    console.error("Error returning book:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

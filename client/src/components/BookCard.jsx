@@ -1,9 +1,9 @@
-import useIsAdmin from "./AdminOnly";
+import useIsAdmin from "../hooks/AdminOnly";
 import { Button } from "./ui/button";
 
-export default function BookCard({ book, onDelete, onUpdate, onBorrow }) {
-  const isAdmin = useIsAdmin();
 
+export default function BookCard({ book, onDelete, onUpdate, onBorrow, onReturn }) {
+  const isAdmin = useIsAdmin();
 
   const coverUrl = book.isbn
     ? `https://covers.openlibrary.org/b/isbn/${book.isbn}-M.jpg`
@@ -11,7 +11,6 @@ export default function BookCard({ book, onDelete, onUpdate, onBorrow }) {
 
   return (
     <div className="bg-gray-800/50 p-4 rounded-lg shadow-lg flex flex-col justify-between">
-    
       <img
         src={coverUrl}
         alt={`${book.title} cover`}
@@ -27,48 +26,38 @@ export default function BookCard({ book, onDelete, onUpdate, onBorrow }) {
             ? new Date(book.publishedDate).toLocaleDateString()
             : "N/A"}
         </p>
-        <p className="text-sm text-gray-400">📖 Pages: {book.pages || "N/A"}</p>
         <p className="text-sm text-gray-400">🏷️ Genre: {book.genre || "N/A"}</p>
         <p className="text-sm text-gray-400">
           ✅ Status:{" "}
-          <span
-            className={
-              book.available
-                ? "text-green-400 font-semibold"
-                : "text-red-400 font-semibold"
-            }
-          >
+          <span className={book.available ? "text-green-400 font-semibold" : "text-red-400 font-semibold"}>
             {book.available ? "Available" : "Borrowed"}
           </span>
         </p>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
+        
         {onBorrow && book.available && (
-          <Button
-            onClick={() => onBorrow(book._id)}
-            className="flex-grow"
-            variant="default"
-          >
+          <Button onClick={() => onBorrow(book._id)} className="flex-grow">
             Borrow
           </Button>
         )}
 
+       
+        {onReturn && !book.available && (
+           <Button onClick={() => onReturn(book._id)} className="flex-grow" variant="secondary">
+             {isAdmin ? "Force Return" : "Return Book"}
+           </Button>
+        )}
+
+        
         {isAdmin && onUpdate && (
-          <Button
-            onClick={() => onUpdate(book)}
-            className="flex-grow"
-            variant="secondary"
-          >
+          <Button onClick={() => onUpdate(book)} className="flex-grow" variant="outline">
             Update
           </Button>
         )}
         {isAdmin && onDelete && (
-          <Button
-            onClick={() => onDelete(book._id)}
-            className="flex-grow"
-            variant="destructive"
-          >
+          <Button onClick={() => onDelete(book._id)} className="flex-grow" variant="destructive">
             Delete
           </Button>
         )}

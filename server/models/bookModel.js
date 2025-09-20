@@ -8,7 +8,7 @@ const bookSchema = new mongoose.Schema({
   pages: { type: Number },
   genre: { type: String },
   available: { type: Boolean, default: true },
+  borrowedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null }
 });
 
 export default mongoose.model("Book", bookSchema);
-    

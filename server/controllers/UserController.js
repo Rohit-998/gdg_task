@@ -1,8 +1,9 @@
 import User from "../models/userModel.js";
+import Book from "../models/bookModel.js"; 
 
 export const getUserDetails = async (req, res) => {
   try {
-    const userId = req.user?.userId; 
+    const userId = req.user?.userId;
     if (!userId) {
       return res.status(400).json({ message: "User ID not provided" });
     }
@@ -18,3 +19,21 @@ export const getUserDetails = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+export const dashboard = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+  
+    const borrowedBooks = await Book.find({ borrowedBy: userId });
+
+    res.status(200).json({
+      message: "Borrowed books fetched successfully",
+      books: borrowedBooks,
+    });
+  } catch (error) {
+    console.error("Error fetching dashboard data:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
