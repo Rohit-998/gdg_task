@@ -63,9 +63,9 @@ export default function AddBook() {
 
   const onSubmit = async (data) => {
     try {
-      // Convert pages to number before sending
+      
       const payload = { ...data, pages: Number(data.pages) };
-      const res = await addBook(payload);
+       await addBook(payload);
 
       toast.success("Book added successfully!");
       form.reset();
