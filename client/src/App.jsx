@@ -30,7 +30,7 @@ export default function App() {
   const shouldHideNavbar = !isAuthenticated || hideNavbarRoutes.includes(location.pathname);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-900 text-white">
+    <div className="min-h-screen flex flex-col text-white">
       <Background />
       {!shouldHideNavbar && <Navbar/>}
       <main className="flex-grow container mx-auto p-4">
