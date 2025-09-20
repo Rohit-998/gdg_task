@@ -123,10 +123,19 @@ body {
 }
 
 .card-border {
-  /* No more max-md:hidden or fixed height! */
+  /* ✅ FIX: REMOVED max-md:hidden and fixed height */
   @apply p-0.5 rounded-2xl w-full;
   background: linear-gradient(145deg, #1a1c20, #08090d);
 }
+
+.form-container {
+  @apply bg-[#000000c0] rounded-2xl shadow-md p-6;
+}
+
+.label {
+  @apply text-sm font-medium text-gray-100 mb-1;
+}
+
 @utility border-gradient {
   @apply bg-gradient-to-b from-[#151718] to-[#10111133];
 }
@@ -169,26 +178,7 @@ body {
   }
 }
 
-.card-border {
-  @apply bg-[#0e1011] p-0.5 rounded-2xl flex-1 sm:basis-1/2 w-full max-md:hidden;
-  background: linear-gradient(145deg, #1a1c20, #08090d);
-}
-
-
-.form-container {
-  @apply bg-[#000000c0] rounded-2xl shadow-md p-6;
-}
-
-
-.label {
-  @apply text-sm font-medium text-gray-100 mb-1;
-}
-
 input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 0;
   display: none;
 }
-
-/* input[type="date"] {
-  @apply appearance-none;
-} */

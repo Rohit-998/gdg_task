@@ -59,14 +59,15 @@ export default function AuthForm({ type }) {
   const onSubmit = async (data) => {
     try {
       const res = isSignIn ? await signin(data) : await signup(data);
+
       if (res.data?.token) {
         localStorage.setItem("token", res.data.token);
         toast.success(
           isSignIn ? "Login successful!" : "Account created successfully!"
         );
-        navigate("/");
+        navigate("/home"); // Navigate to home after successful auth
       } else {
-        toast.error("No token received. Please try again.");
+        toast.error("Authentication failed. Please try again.");
       }
     } catch (error) {
       console.error("Auth Error:", error);
@@ -75,63 +76,61 @@ export default function AuthForm({ type }) {
   };
 
   return (
-    // Use min-h-screen for full height and add padding for mobile
-    <div className="flex items-center justify-center min-h-screen px-4">
-      {/* This container now has styles to ensure it's visible and looks good */}
-      <div className="w-full max-w-md rounded-2xl p-0.5 card-border relative z-10">
-        <div className="bg-black/80 backdrop-blur-sm rounded-[14px] p-6 sm:p-8">
-            <div className="flex flex-col items-center mb-6">
-                <img src="/logo.png" alt="Logo" width={50} height={36} />
-                <h2 className="text-2xl font-bold mt-2">
+    // ✅ FIX: Added px-4 for padding on small screens
+    <div className="flex items-center justify-center min-h-[70vh] px-4">
+      {/* ✅ FIX: Refactored to a responsive structure */}
+      <div className="card-border w-full max-w-md">
+        <div className="form-container">
+          <div className="flex flex-col items-center mb-6">
+            <img src="/logo.png" alt="Logo" width={50} height={36} />
+            <h2 className="text-2xl font-bold mt-2">
+              {isSignIn ? "Login" : "Sign Up"}
+            </h2>
+            <p className="text-sm text-gray-400">Library Management</p>
+          </div>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {!isSignIn && (
+                <FormField
+                  control={form.control}
+                  name="name"
+                  label="Name"
+                  placeholder="Enter your name"
+                />
+              )}
+
+              <FormField
+                control={form.control}
+                name="email"
+                label="Email"
+                placeholder="Enter your email"
+                type="email"
+              />
+
+              <FormField
+                control={form.control}
+                name="password"
+                label="Password"
+                placeholder="Enter your password"
+                type="password"
+              />
+
+              <Button type="submit" className="w-full">
                 {isSignIn ? "Login" : "Sign Up"}
-                </h2>
-                <p className="text-sm text-gray-400">
-                Library
-                </p>
-            </div>
+              </Button>
+            </form>
+          </Form>
 
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                {!isSignIn && (
-                    <FormField
-                    control={form.control}
-                    name="name"
-                    label="Name"
-                    placeholder="Enter your name"
-                    />
-                )}
-
-                <FormField
-                    control={form.control}
-                    name="email"
-                    label="Email"
-                    placeholder="Enter your email"
-                    type="email"
-                />
-
-                <FormField
-                    control={form.control}
-                    name="password"
-                    label="Password"
-                    placeholder="Enter your password"
-                    type="password"
-                />
-
-                <Button type="submit" className="w-full">
-                    {isSignIn ? "Login" : "Sign Up"}
-                </Button>
-                </form>
-            </Form>
-
-            <p className="mt-6 text-sm text-center">
-                {isSignIn ? "Don't have an account?" : "Already have an account?"}{" "}
-                <Link
-                to={isSignIn ? "/signup" : "/login"}
-                className="text-blue-400 hover:underline font-bold"
-                >
-                {isSignIn ? "Sign Up" : "Login"}
-                </Link>
-            </p>
+          <p className="mt-4 text-sm text-center">
+            {isSignIn ? "Don't have an account?" : "Already have an account?"}{" "}
+            <Link
+              to={isSignIn ? "/signup" : "/login"}
+              className="text-blue-400 hover:underline font-bold"
+            >
+              {isSignIn ? "Sign Up" : "Login"}
+            </Link>
+          </p>
         </div>
       </div>
     </div>
