@@ -4,12 +4,14 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Signup from "./pages/Signup";
+
 import Dashboard from "./pages/DashBoard";
 import AddBook from "./pages/AddBook";
 import Analytics from "./pages/Analytics";
 
 import { Background } from "./components/Background";
+import SignUp from "./pages/Signup";
+
 
 export default function App() {
   const location = useLocation();
@@ -41,7 +43,7 @@ export default function App() {
           />
 
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/signup" element={<SignUp />} />
 
           <Route
             path="/home"
