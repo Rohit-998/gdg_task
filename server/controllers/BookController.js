@@ -283,3 +283,22 @@ export const paginateBooks = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const borrowBook = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const book = await Book.findById(id);
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
+    }   
+    if (!book.available) {
+      return res.status(400).json({ message: "Book is currently unavailable" });
+    }
+    book.available = false;
+    await book.save();
+    res.status(200).json({ message: "Book borrowed successfully" });
+  } catch (error) {
+    console.error("Error borrowing book:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

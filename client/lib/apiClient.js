@@ -13,3 +13,4 @@ export const updateBook = (id, data) => API.put(`/api/books/updatebook/${id}`, d
 export const getUserDetails = () => API.get("/api/users/user", { withCredentials: true });
 
 export const getAnalytics = () => API.get("/api/books/analytics", { withCredentials: true });
+export const borrowBook = (id) => API.post(`/api/books/borrow/${id}`, {}, { withCredentials: true });

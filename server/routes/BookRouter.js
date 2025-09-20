@@ -10,6 +10,7 @@ import {
   sortBooks,
   paginateBooks,
   getBooksExtendedQuery,
+  borrowBook,
 } from "../controllers/BookController.js";
 import { isAdmin } from "../middleware/isAdmin.js";
 import { verifyToken } from "../middleware/verifyToken.js";
@@ -32,5 +33,5 @@ bookRouter.get("/extended-query", verifyToken, getBooksExtendedQuery);
 bookRouter.get("/filter", verifyToken, filterBooks);
 bookRouter.get("/sort", verifyToken, sortBooks);
 bookRouter.get("/paginate", verifyToken, paginateBooks);
-
+bookRouter.post("/borrow/:id", verifyToken, borrowBook);
 export default bookRouter;

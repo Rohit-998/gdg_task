@@ -1,39 +1,55 @@
 import useIsAdmin from "./AdminOnly";
+import { Button } from "./ui/button"; // A nice-looking button
 
-export default function BookCard({ book, onDelete, onUpdate }) {
+// ✅ Add onBorrow to the props
+export default function BookCard({ book, onDelete, onUpdate, onBorrow }) {
   const isAdmin = useIsAdmin();
   return (
-    <div className="bg-gray-700 p-4 rounded-lg shadow-md flex flex-col">
-      <h3 className="text-lg font-bold text-blue-300">{book.title}</h3>
-      
-      <p className="text-sm">👤 Author: {book.author}</p>
-      <p className="text-sm">📅 Published: {book.publishedDate ? new Date(book.publishedDate).toLocaleDateString() : "N/A"}</p>
-      <p className="text-sm">📖 Pages: {book.pages || "N/A"}</p>
-      <p className="text-sm">🏷️ Genre: {book.genre || "N/A"}</p>
-      <p className="text-sm">📚 ISBN: {book.isbn || "N/A"}</p>
-      <p className="text-sm">
-        ✅ Available:{" "}
-        <span className={book.available ? "text-green-400" : "text-red-400"}>
-          {book.available ? "Yes" : "No"}
-        </span>
-      </p>
+    <div className="bg-gray-800/50 p-4 rounded-lg shadow-lg flex flex-col justify-between">
+      <div>
+        <h3 className="text-xl font-bold text-blue-300 mb-2">{book.title}</h3>
+        <p className="text-sm text-gray-400">👤 Author: {book.author}</p>
+        <p className="text-sm text-gray-400">📅 Published: {book.publishedDate ? new Date(book.publishedDate).toLocaleDateString() : "N/A"}</p>
+        <p className="text-sm text-gray-400">📖 Pages: {book.pages || "N/A"}</p>
+        <p className="text-sm text-gray-400">🏷️ Genre: {book.genre || "N/A"}</p>
+        <p className="text-sm text-gray-400">
+          ✅ Status:{" "}
+          <span className={book.available ? "text-green-400 font-semibold" : "text-red-400 font-semibold"}>
+            {book.available ? "Available" : "Borrowed"}
+          </span>
+        </p>
+      </div>
 
-      <div className="mt-3 flex gap-2">
-        {onUpdate && (
-          <button
+      <div className="mt-4 flex flex-wrap gap-2">
+        {/* ✅ ADD BORROW BUTTON LOGIC */}
+        {onBorrow && book.available && !isAdmin && (
+          <Button
+            onClick={() => onBorrow(book._id)}
+            className="flex-grow"
+            variant="default" // Primary button style
+          >
+            Borrow
+          </Button>
+        )}
+
+        {/* Admin buttons */}
+        {isAdmin && onUpdate && (
+          <Button
             onClick={() => onUpdate(book)}
-            className="bg-yellow-500 px-3 py-1 rounded-md text-sm"
+            className="flex-grow"
+            variant="secondary"
           >
             Update
-          </button>
+          </Button>
         )}
-        {onDelete && isAdmin && (
-          <button
+        {isAdmin && onDelete && (
+          <Button
             onClick={() => onDelete(book._id)}
-            className="bg-red-500 px-3 py-1 rounded-md text-sm"
+            className="flex-grow"
+            variant="destructive"
           >
             Delete
-          </button>
+          </Button>
         )}
       </div>
     </div>

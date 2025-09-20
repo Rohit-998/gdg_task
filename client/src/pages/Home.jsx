@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import BookCard from "../components/BookCard";
-import { getBooks } from "../../lib/apiClient";
-import { Input } from "../components/ui/input"; // Assuming shadcn/ui
-import { Button } from "../components/ui/button"; // Assuming shadcn/ui
+import { getBooks, borrowBook } from "../../lib/apiClient"; // ✅ include borrowBook
+import { toast } from "sonner"; // ✅ notifications
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../components/ui/select"; // Assuming shadcn/ui
+} from "../components/ui/select";
 
 export default function Home() {
   const [books, setBooks] = useState([]);
@@ -19,8 +20,8 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
 
   // State for sorting
-  const [sortBy, setSortBy] = useState("title"); // Default sort field
-  const [order, setOrder] = useState("asc"); // Default sort order
+  const [sortBy, setSortBy] = useState("title");
+  const [order, setOrder] = useState("asc");
 
   // State for pagination
   const [pagination, setPagination] = useState({
@@ -28,6 +29,24 @@ export default function Home() {
     totalPages: 1,
     totalBooks: 0,
   });
+
+  // ✅ Handle Borrow Book
+  const handleBorrow = async (bookId) => {
+    try {
+      await borrowBook(bookId);
+      toast.success("Book borrowed successfully!");
+
+      // update the UI instantly
+      setBooks((currentBooks) =>
+        currentBooks.map((book) =>
+          book._id === bookId ? { ...book, available: false } : book
+        )
+      );
+    } catch (error) {
+      console.error("Failed to borrow book:", error);
+      toast.error(error.response?.data?.message || "Could not borrow book.");
+    }
+  };
 
   // Fetch books whenever filters, sorting, or page changes
   useEffect(() => {
@@ -37,7 +56,7 @@ export default function Home() {
         const params = {
           search: searchTerm,
           page: pagination.page,
-          limit: 9, // Show 9 books per page
+          limit: 9,
           sortBy: sortBy,
           order: order,
         };
@@ -56,12 +75,12 @@ export default function Home() {
       }
     };
 
-    // Use a timeout to debounce the search API call
+    // debounce search
     const timerId = setTimeout(() => {
       fetchBooks();
-    }, 500); // Wait 500ms after user stops typing
+    }, 500);
 
-    return () => clearTimeout(timerId); // Cleanup timeout
+    return () => clearTimeout(timerId);
   }, [searchTerm, pagination.page, sortBy, order]);
 
   const handlePageChange = (newPage) => {
@@ -111,7 +130,11 @@ export default function Home() {
       ) : books.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {books.map((book) => (
-            <BookCard key={book._id} book={book} />
+            <BookCard
+              key={book._id}
+              book={book}
+              onBorrow={handleBorrow} // ✅ pass handler
+            />
           ))}
         </div>
       ) : (
