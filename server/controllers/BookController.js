@@ -3,12 +3,16 @@ import Book from "../models/bookModel.js";
 
 
 // -------------------- Get All Books --------------------
+// -------------------- Get All Books (UPDATED) --------------------
 export const getAllBooks = async (req, res) => {
   try {
-    const { category, author, search, page = 1, limit = 10 } = req.query;
+    // ✅ Added sortBy and order
+    const { category, author, search, page = 1, limit = 10, sortBy, order } = req.query;
 
-    // 🔑 Unique cache key for query + pagination
-    const cacheKey = `books_all_${category || "all"}_${author || "all"}_${search || "all"}_${page}_${limit}`;
+    // 🔑 Unique cache key now includes sorting
+    const cacheKey = `books_all_${category || "all"}_${author || "all"}_${
+      search || "all"
+    }_${page}_${limit}_${sortBy || "title"}_${order || "asc"}`;
 
     // 1) Check cache
     const cached = await redis.get(cacheKey);
@@ -22,7 +26,16 @@ export const getAllBooks = async (req, res) => {
     if (author) query.author = author;
     if (search) query.title = { $regex: search, $options: "i" };
 
+    // ✅ Define sorting options
+    const sortOptions = {};
+    if (sortBy) {
+      sortOptions[sortBy] = order === "desc" ? -1 : 1;
+    } else {
+      sortOptions.createdAt = -1; // Default sort
+    }
+
     const books = await Book.find(query)
+      .sort(sortOptions) // ✅ Apply sorting
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
@@ -45,7 +58,6 @@ export const getAllBooks = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 // -------------------- Add Book --------------------
 export const addBook = async (req, res) => {
   const { title, author, publishedDate, isbn, pages, genre } = req.body;
