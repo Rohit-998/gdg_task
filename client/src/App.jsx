@@ -15,9 +15,6 @@ export default function App() {
   const isLoading = useAuthStore((state) => state.isLoading);
   const isAuthenticated = useAuthStore((state) => !!state.user);
 
-  console.log(`App Render: isLoading=${isLoading}, isAuthenticated=${isAuthenticated}`);
-
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-black">
@@ -32,7 +29,7 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col text-white">
       <Background />
-      {!shouldHideNavbar && <Navbar/>}
+      {!shouldHideNavbar && <Navbar />}
       <main className="flex-grow container mx-auto p-4">
         <Routes>
           <Route
