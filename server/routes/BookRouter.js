@@ -6,9 +6,7 @@ import {
   updateBook,
   deleteBook,
   getBookAnalytics,
-  filterBooks,
-  sortBooks,
-  paginateBooks,
+
   getBooksExtendedQuery,
   borrowBook,
   returnBook,
@@ -30,10 +28,8 @@ bookRouter.post("/addbook", verifyToken, addBook);
 bookRouter.put("/updatebook/:id", verifyToken, isAdmin, updateBook);
 bookRouter.delete("/deletebook/:id", verifyToken, isAdmin, deleteBook);
 bookRouter.get("/analytics", verifyToken, isAdmin, getBookAnalytics);
-bookRouter.get("/extended-query", verifyToken, getBooksExtendedQuery);
-bookRouter.get("/filter", verifyToken, filterBooks);
-bookRouter.get("/sort", verifyToken, sortBooks);
-bookRouter.get("/paginate", verifyToken, paginateBooks);
+
+
 bookRouter.post("/borrow/:id", verifyToken, borrowBook);
 bookRouter.post("/return/:id", verifyToken, returnBook);
 
