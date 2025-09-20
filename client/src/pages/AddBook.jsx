@@ -81,7 +81,7 @@ return (
     <div className="card-border">
       <div className="form-container">
         <div className="flex flex-col items-center mb-6">
-          <img src="/logo.svg" alt="Logo" width={40} height={36} />
+          <img src="/logo.png" alt="Logo" width={40} height={36} />
           <h2 className="text-2xl font-bold mt-2">Add a New Book</h2>
           <p className="text-sm text-gray-400">Library Management</p>
         </div>
