@@ -13,8 +13,10 @@ export default function Navbar() {
   return (
     <nav className=" shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        
         <Link to="/" className="text-xl font-bold text-purple-400">
-          📚 Library Hub
+          <img src="/logo.png" alt="Library Hub Logo" className="inline-block w-8 h-8 mr-2" />
+          Library Hub
         </Link>
         <button
           className="md:hidden text-gray-200"

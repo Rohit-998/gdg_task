@@ -84,7 +84,7 @@ export default function AuthForm({ type }) {
     <div className="flex items-center justify-center min-h-[70vh]">
       <div className="w-full max-w-md rounded-xl shadow-md p-6 card-border">
         <div className="flex flex-col items-center mb-6">
-          <img src="/logo.svg" alt="Logo" width={40} height={36} />
+          <img src="/logo.png" alt="Logo" width={60} height={36} />
           <h2 className="text-2xl font-bold mt-2">
             {isSignIn ? "Login" : "Sign Up"}
           </h2>

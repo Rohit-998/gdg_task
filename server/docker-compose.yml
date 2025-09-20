@@ -8,14 +8,7 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-    environment:
-      - CLIENT_URL=http://localhost:5173
-      - PORT=8000
-      - JWT_SECRET=t43jofijsfu9e0
-      - MONGO_URI=mongodb://mongo:27017/mydatabase
-      - REDIS_HOST=redis
-      - ADMIN_EMAIL=rohitagrawal7974@gmail.com
-      - ADMIN_PASSWORD=rohit123
+  
     depends_on:
       - mongo
       - redis
