@@ -82,7 +82,7 @@ export default function Home() {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Library Catalog</h1>
-      <div className="flex flex-wrap gap-4 items-center justify-between mb-8 p-4 bg-gray-800 rounded-lg">
+      <div className="flex flex-wrap gap-4 items-center justify-between mb-8 p-4 bg- rounded-lg">
         <Input
           placeholder="Search by title..."
           value={searchTerm}

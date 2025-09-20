@@ -9,7 +9,7 @@ export default function BookCard({ book, onDelete, onUpdate, onBorrow, onReturn 
     : "https://via.placeholder.com/150x220.png?text=No+Cover";
 
   return (
-    <div className=" p-4 rounded-lg shadow-lg flex flex-col justify-between">
+    <div className=" p-4 rounded-lg shadow-lg flex flex-col justify-between bg-gray-800/50">
       <img
         src={coverUrl}
         alt={`${book.title} cover`}
