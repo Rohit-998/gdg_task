@@ -182,8 +182,11 @@ body {
   @apply text-sm font-medium text-gray-100 mb-1;
 }
 
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  display: none;
+}
 
-
-
-
-
+/* input[type="date"] {
+  @apply appearance-none;
+} */

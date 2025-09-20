@@ -19,7 +19,7 @@ import { addBook } from "../../lib/apiClient";
 const bookSchema = z.object({
   title: z.string().min(2, { message: "Title is required" }),
   author: z.string().min(2, { message: "Author is required" }),
-  publishedDate: z.string().optional(), // input will be type="date"
+  publishedDate: z.string().optional(),
   isbn: z.string().min(5, { message: "ISBN must be at least 5 characters" }),
   pages: z
     .string()
@@ -38,7 +38,23 @@ const FormField = ({ control, name, label, placeholder, type = "text" }) => (
       <FormItem>
         <FormLabel className="label">{label}</FormLabel>
         <FormControl>
-          <Input type={type} placeholder={placeholder} {...field} />
+          {type === "date" ? (
+            <div className="relative">
+              <Input
+                type="date"
+                placeholder="dd-mm-yyyy"
+                {...field}
+                className="pr-10"
+              />
+              <img
+                src="/calendar.svg"
+                alt="calendar"
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 pointer-events-none opacity-70"
+              />
+            </div>
+          ) : (
+            <Input type={type} placeholder={placeholder} {...field} />
+          )}
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -63,9 +79,8 @@ export default function AddBook() {
 
   const onSubmit = async (data) => {
     try {
-      
       const payload = { ...data, pages: Number(data.pages) };
-       await addBook(payload);
+      await addBook(payload);
 
       toast.success("Book added successfully!");
       form.reset();
@@ -76,65 +91,63 @@ export default function AddBook() {
     }
   };
 
-return (
-  <div className="flex items-center justify-center min-h-[70vh] px-4">
-    <div className="card-border">
-      <div className="form-container">
-        <div className="flex flex-col items-center mb-6">
-          <img src="/logo.png" alt="Logo" width={40} height={36} />
-          <h2 className="text-2xl font-bold mt-2">Add a New Book</h2>
-          <p className="text-sm text-gray-400">Library Management</p>
+  return (
+    <div className="flex items-center justify-center min-h-[70vh] px-4">
+      <div className="card-border">
+        <div className="form-container">
+          <div className="flex flex-col items-center mb-6">
+            <img src="/logo.png" alt="Logo" width={40} height={36} />
+            <h2 className="text-2xl font-bold mt-2">Add a New Book</h2>
+            <p className="text-sm text-gray-400">Library Management</p>
+          </div>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="title"
+                label="Title"
+                placeholder="Enter book title"
+              />
+              <FormField
+                control={form.control}
+                name="author"
+                label="Author"
+                placeholder="Enter author name"
+              />
+              <FormField
+                control={form.control}
+                name="publishedDate"
+                label="Published Date"
+                type="date"
+              />
+              <FormField
+                control={form.control}
+                name="isbn"
+                label="ISBN"
+                placeholder="Enter ISBN number"
+              />
+              <FormField
+                control={form.control}
+                name="pages"
+                label="Pages"
+                placeholder="Enter number of pages"
+                type="number"
+              />
+              <FormField
+                control={form.control}
+                name="genre"
+                label="Genre"
+                placeholder="Enter genre (e.g., Fiction, Science)"
+              />
+
+              <Button type="submit" className="w-full">
+                Add Book
+              </Button>
+            </form>
+          </Form>
         </div>
-
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* fields unchanged */}
-            <FormField
-              control={form.control}
-              name="title"
-              label="Title"
-              placeholder="Enter book title"
-            />
-            <FormField
-              control={form.control}
-              name="author"
-              label="Author"
-              placeholder="Enter author name"
-            />
-            <FormField
-              control={form.control}
-              name="publishedDate"
-              label="Published Date"
-              type="date"
-            />
-            <FormField
-              control={form.control}
-              name="isbn"
-              label="ISBN"
-              placeholder="Enter ISBN number"
-            />
-            <FormField
-              control={form.control}
-              name="pages"
-              label="Pages"
-              placeholder="Enter number of pages"
-              type="number"
-            />
-            <FormField
-              control={form.control}
-              name="genre"
-              label="Genre"
-              placeholder="Enter genre (e.g., Fiction, Science)"
-            />
-
-            <Button type="submit" className="w-full">
-              Add Book
-            </Button>
-          </form>
-        </Form>
       </div>
     </div>
-  </div>
-);
-
+  );
 }
