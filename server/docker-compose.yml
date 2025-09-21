@@ -4,7 +4,7 @@ services:
   app:
     build: .
     expose:
-      - "8000"   # expose only inside docker network, not directly to host
+      - "8000"   
     volumes:
       - .:/app
       - /app/node_modules
@@ -32,7 +32,7 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - "8000:80"   # expose nginx to host
+      - "8000:80"   
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:

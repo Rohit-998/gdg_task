@@ -2,7 +2,7 @@ import { compare } from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
 
-const maxAge = 3 * 24 * 60 * 60; // 3 days in seconds
+const maxAge = 3 * 24 * 60 * 60; 
 const createToken = (email, userId, role) => {
   return jwt.sign({ email, userId, role }, process.env.JWT_SECRET, {
     expiresIn: maxAge,
