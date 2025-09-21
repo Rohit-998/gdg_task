@@ -3,7 +3,7 @@ import Book from "../models/bookModel.js";
 
 export const getAllBooks = async (req, res) => {
   try {
-    const { search, page = 1, limit = 9, sortBy, order } = req.query;
+    const { search, page = 1, limit = 10, sortBy, order } = req.query;
     const cacheKey = `books_all_${search || "all"}_${page}_${limit}_${sortBy || "title"}_${order || "asc"}`;
     
     const cached = await redis.get(cacheKey);
