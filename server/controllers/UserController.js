@@ -21,7 +21,8 @@ export const getUserDetails = async (req, res) => {
 export const dashboard = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const { page = 1, limit = 10 } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
 
     const query = { borrowedBy: userId };
 
