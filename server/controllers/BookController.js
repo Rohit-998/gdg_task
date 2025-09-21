@@ -3,35 +3,40 @@ import Book from "../models/bookModel.js";
 
 export const getAllBooks = async (req, res) => {
   try {
-    const { category, author, search, page = 1, limit = 9, sortBy, order } = req.query;
-    const cacheKey = `books_all_${category || "all"}_${author || "all"}_${search || "all"}_${page}_${limit}_${sortBy || "title"}_${order || "asc"}`;
+    const { search, page = 1, limit = 9, sortBy, order } = req.query;
+    const cacheKey = `books_all_${search || "all"}_${page}_${limit}_${sortBy || "title"}_${order || "asc"}`;
+    
     const cached = await redis.get(cacheKey);
     if (cached) {
       return res.status(200).json(JSON.parse(cached));
     }
+
     const query = {};
-    if (category) query.category = category;
-    if (author) query.author = author;
     if (search) query.title = { $regex: search, $options: "i" };
+    
     const sortOptions = {};
     if (sortBy) {
       sortOptions[sortBy] = order === "desc" ? -1 : 1;
     } else {
       sortOptions.createdAt = -1;
     }
+    
     const books = await Book.find(query)
       .sort(sortOptions)
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .populate('borrowedBy', 'name')
       .exec();
+      
     const count = await Book.countDocuments(query);
+    
     const response = {
       books,
       totalPages: Math.ceil(count / limit),
       currentPage: parseInt(page),
       totalBooks: count,
     };
+    
     await redis.set(cacheKey, JSON.stringify(response), "EX", 300);
     res.status(200).json(response);
   } catch (error) {

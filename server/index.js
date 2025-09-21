@@ -6,9 +6,8 @@ import mongoose from "mongoose";
 import setupAdmin from "./models/setUpAdmin.js";
 import authRouter from "./routes/AuthRoutes.js";
 import bookRouter from "./routes/BookRouter.js";
-
-import generalLimiter from "./config/rateLimiter.js";
 import userRouter from "./routes/UserRoutes.js";
+import generalLimiter from "./config/rateLimiter.js";
 
 dotenv.config();
 

@@ -2,7 +2,7 @@ import { compare } from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
 
-const maxAge = 3 * 24 * 60 * 60;
+const maxAge = 3 * 24 * 60 * 60; // 3 days in seconds
 const createToken = (email, userId, role) => {
   return jwt.sign({ email, userId, role }, process.env.JWT_SECRET, {
     expiresIn: maxAge,
@@ -43,7 +43,7 @@ export const signup = async (req, res) => {
     }
     const newUser = await User.create({ name, email, password });
     const token = createToken(newUser.email, newUser._id, newUser.role);
-    res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000, secure: process.env.NODE_ENV === 'production', sameSite: "none" });
+    res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000, secure: true, sameSite: "none" });
     res.status(201).json({ user: { name: newUser.name, email: newUser.email, role: newUser.role, id: newUser._id } });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });

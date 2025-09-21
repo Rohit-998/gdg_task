@@ -1,4 +1,4 @@
-import useIsAdmin from "../hooks/AdminOnly";
+import useIsAdmin from "../hooks/useIsAdmin";
 import { Button } from "./ui/button";
 
 export default function BookCard({ book, onDelete, onUpdate, onBorrow, onReturn }) {
@@ -28,7 +28,7 @@ export default function BookCard({ book, onDelete, onUpdate, onBorrow, onReturn 
           <span className={book.available ? "text-green-400 font-semibold" : "text-red-400 font-semibold"}>
             {book.available ? "Available" : "Borrowed"}
           </span>
-          {!book.available && book.borrowedBy && (
+          {isAdmin && !book.available && book.borrowedBy && (
             <span className="text-sm text-yellow-400"> by {book.borrowedBy.name}</span>
           )}
         </p>
@@ -46,7 +46,7 @@ export default function BookCard({ book, onDelete, onUpdate, onBorrow, onReturn 
            </Button>
         )}
         {isAdmin && onUpdate && (
-          <Button onClick={() => onUpdate(book)} className="flex-grow bg-purple-500" variant={"button"} >
+          <Button onClick={() => onUpdate(book)} className="flex-grow bg-purple-500" variant={"outline"} >
             Update
           </Button>
         )}

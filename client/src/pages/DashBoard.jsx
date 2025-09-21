@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import BookCard from "../components/BookCard";
-import useIsAdmin from "../hooks/AdminOnly";
+import useIsAdmin from "../hooks/useIsAdmin";
 import { getBooks, getDashboardBooks, returnBook, deleteBook, updateBook } from "../lib/apiClient";
 import { Button } from "../components/ui/button";
 
