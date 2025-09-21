@@ -1,65 +1,79 @@
-import React, { lazy, Suspense } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
+import { Form, FormItem, FormLabel, FormControl, FormMessage } from "../components/ui/form";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
+import { addBook } from "../lib/apiClient";
 
+const bookSchema = z.object({
+  title: z.string().min(2, { message: "Title is required" }),
+  author: z.string().min(2, { message: "Author is required" }),
+  publishedDate: z.string().min(1, { message: "Published date is required" }),
+  isbn: z.string().min(10, { message: "ISBN must be at least 10 characters" }),
+  pages: z.coerce.number().positive({ message: "Pages must be a positive number" }),
+  genre: z.string().min(2, { message: "Genre is required" }),
+});
 
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import AddBook from "./pages/AddBook";
-import Analytics from "./pages/Analytics";
-import SignUp from "./pages/SignUp";
-import useAuthStore from "./store/authStore";
-import ProtectedRoute from "../components/ProtectedRoute";
-import Navbar from "../components/Navbar";
-
-const Background = lazy(() =>
-  import("./components/Background").then((module) => ({ default: module.Background }))
+const FormField = ({ control, name, label, placeholder, type = "text" }) => (
+  <Controller
+    name={name}
+    control={control}
+    render={({ field }) => (
+      <FormItem>
+        <FormLabel>{label}</FormLabel>
+        <FormControl>
+          <Input type={type} placeholder={placeholder} {...field} className="bg-gray-700 border-gray-600" />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    )}
+  />
 );
 
-export default function App() {
-  const location = useLocation();
-  const isLoading = useAuthStore((state) => state.isLoading);
-  const isAuthenticated = useAuthStore((state) => !!state.user);
+export default function AddBook() {
+  const navigate = useNavigate();
+  const form = useForm({
+    resolver: zodResolver(bookSchema),
+    defaultValues: {
+      title: "",
+      author: "",
+      publishedDate: "",
+      isbn: "",
+      pages: "",
+      genre: "",
+    },
+  });
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-black">
-        <p className="text-white">Verifying Session...</p>
-      </div>
-    );
-  }
-
-  const hideNavbarRoutes = ["/login", "/signup"];
-  const shouldHideNavbar = !isAuthenticated || hideNavbarRoutes.includes(location.pathname);
+  const onSubmit = async (data) => {
+    try {
+      await addBook(data);
+      toast.success("Book added successfully!");
+      form.reset();
+      navigate("/home");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to add book!");
+    }
+  };
 
   return (
-    <div className="min-h-screen flex flex-col relative">
-      <Suspense fallback={null}>
-        <Background />
-      </Suspense>
-      
-      {!shouldHideNavbar && <Navbar />}
-      <main className="flex-grow container mx-auto p-4 z-10">
-        <Routes>
-          <Route
-            path="/"
-            element={
-              isAuthenticated ? (
-                <Navigate to="/home" replace />
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            }
-          />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/add-book" element={<ProtectedRoute adminOnly><AddBook /></ProtectedRoute>} />
-          <Route path="/analytics" element={<ProtectedRoute adminOnly><Analytics /></ProtectedRoute>} />
-          <Route path="*" element={<Navigate to={isAuthenticated ? "/home" : "/login"} replace />} />
-        </Routes>
-      </main>
+    <div className="flex items-center justify-center min-h-[70vh] px-4">
+      <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-6 text-center">Add a New Book</h2>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField control={form.control} name="title" label="Title" placeholder="The Great Gatsby" />
+            <FormField control={form.control} name="author" label="Author" placeholder="F. Scott Fitzgerald" />
+            <FormField control={form.control} name="publishedDate" label="Published Date" type="date" />
+            <FormField control={form.control} name="isbn" label="ISBN" placeholder="9780743273565" />
+            <FormField control={form.control} name="pages" label="Pages" placeholder="180" type="number" />
+            <FormField control={form.control} name="genre" label="Genre" placeholder="Fiction" />
+            <Button type="submit" className="w-full mt-4">Add Book</Button>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 }
