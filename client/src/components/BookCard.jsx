@@ -1,4 +1,5 @@
-import useIsAdmin from "../hooks/useIsAdmin";
+
+import useIsAdmin from "./AdminOnly";
 import { Button } from "./ui/button";
 
 export default function BookCard({ book, onDelete, onUpdate, onBorrow, onReturn }) {
