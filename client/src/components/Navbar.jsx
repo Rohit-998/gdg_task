@@ -33,7 +33,7 @@ export default function Navbar() {
   const closeMenu = () => setIsOpen(false);
 
   return (
-    <nav className="bg-gray-800 shadow-md sticky top-0 z-50">
+    <nav className=" bg-gray-800/50 shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           <Link to="/" className="text-xl font-bold text-purple-400 flex items-center gap-2">
