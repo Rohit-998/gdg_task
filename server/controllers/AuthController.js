@@ -24,7 +24,7 @@ export const signin = async (req, res) => {
       return res.status(401).json({ message: "Invalid password" });
     }
     const token = createToken(user.email, user._id, user.role);
-    res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000, secure: process.env.NODE_ENV === 'production', sameSite: "none" });
+    res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000, secure: true, sameSite: "none" });
     res.status(200).json({ user: { email: user.email, role: user.role, id: user._id, name: user.name } });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });

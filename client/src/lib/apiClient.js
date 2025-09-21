@@ -9,7 +9,7 @@ export const signup = (data) => API.post("/api/auth/signup", data,{withCredentia
 export const signin = (data) => API.post("/api/auth/login", data,{withCredentials:true});
 export const logout = () => API.post("/api/auth/logout",{withCredentials:true});
 
-export const getBooks = (params) => API.get("/api/books", { params });
+export const getBooks = (params) => API.get("/api/books", { params },{withCredentials:true});
 export const addBook = (data) => API.post("/api/books/addbook", data,{withCredentials:true});
 export const deleteBook = (id) => API.delete(`/api/books/deletebook/${id}`,{withCredentials:true});
 export const updateBook = (id, data) => API.put(`/api/books/updatebook/${id}`, data,{withCredentials:true});
