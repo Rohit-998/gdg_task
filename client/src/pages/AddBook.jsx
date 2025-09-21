@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 
-import Navbar from "./components/Navbar";
+
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -10,6 +10,7 @@ import Analytics from "./pages/Analytics";
 import SignUp from "./pages/SignUp";
 import useAuthStore from "./store/authStore";
 import ProtectedRoute from "../components/ProtectedRoute";
+import Navbar from "../components/Navbar";
 
 const Background = lazy(() =>
   import("./components/Background").then((module) => ({ default: module.Background }))
