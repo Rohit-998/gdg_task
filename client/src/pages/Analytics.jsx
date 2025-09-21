@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { getAnalytics } from "../lib/apiClient";
+
 import { toast } from "sonner";
+import { getAnalytics } from "../lib/apiClient";
 
 export default function Analytics() {
   const [analytics, setAnalytics] = useState(null);
