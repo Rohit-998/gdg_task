@@ -51,7 +51,7 @@ export default function Navbar() {
           </div>
           <div className="hidden md:flex items-center space-x-6">
             <Link to="/home" className={navLinkClasses}>Home</Link>
-            <Link to="/dashboard" className={navLinkClasses}>Dashboard</Link>
+            <Link to="/dashboard" className={navLinkClasses}>{isAdmin ? "Admin Dashboard" : "Borrowed Books"}</Link>
             {isAdmin && (
               <>
                 <Link to="/add-book" className={navLinkClasses}>Add Book</Link>
