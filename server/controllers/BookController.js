@@ -3,9 +3,12 @@ import Book from "../models/bookModel.js";
 
 export const getAllBooks = async (req, res) => {
   try {
-    const { search, page = 1, limit = 10, sortBy, order } = req.query;
+    const { search, sortBy, order } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
     const cacheKey = `books_all_${search || "all"}_${page}_${limit}_${sortBy || "title"}_${order || "asc"}`;
-    
+
     const cached = await redis.get(cacheKey);
     if (cached) {
       return res.status(200).json(JSON.parse(cached));
@@ -13,30 +16,30 @@ export const getAllBooks = async (req, res) => {
 
     const query = {};
     if (search) query.title = { $regex: search, $options: "i" };
-    
+
     const sortOptions = {};
     if (sortBy) {
       sortOptions[sortBy] = order === "desc" ? -1 : 1;
     } else {
       sortOptions.createdAt = -1;
     }
-    
+
     const books = await Book.find(query)
       .sort(sortOptions)
-      .limit(limit * 1)
+      .limit(limit)
       .skip((page - 1) * limit)
-      .populate('borrowedBy', 'name')
+      .populate("borrowedBy", "name")
       .exec();
-      
+
     const count = await Book.countDocuments(query);
-    
+
     const response = {
       books,
       totalPages: Math.ceil(count / limit),
-      currentPage: parseInt(page),
+      currentPage: page,
       totalBooks: count,
     };
-    
+
     await redis.set(cacheKey, JSON.stringify(response), "EX", 300);
     res.status(200).json(response);
   } catch (error) {
@@ -132,7 +135,7 @@ export const returnBook = async (req, res) => {
     if (book.available) {
       return res.status(400).json({ message: "This book is already available." });
     }
-    if (role !== 'Admin' && (!book.borrowedBy || book.borrowedBy.toString() !== userId)) {
+    if (role !== "Admin" && (!book.borrowedBy || book.borrowedBy.toString() !== userId)) {
       return res.status(403).json({ message: "You cannot return this book." });
     }
     book.available = true;
@@ -158,7 +161,7 @@ export const getBookAnalytics = async (req, res) => {
     const borrowedBooks = totalBooks - availableBooks;
     const genres = await Book.aggregate([
       { $group: { _id: "$genre", count: { $sum: 1 } } },
-      { $sort: { count: -1 } }
+      { $sort: { count: -1 } },
     ]);
     const response = { totalBooks, availableBooks, borrowedBooks, genres };
     await redis.set(cacheKey, JSON.stringify(response), "EX", 300);
